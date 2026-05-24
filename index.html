@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Ballık - Burdur'un yüksek toprağı</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Burdur'un dağlarında bir köy. Toprak sahipleri ve sahibi olmayı düşünenler için.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #14201a;
+    --forest-deep: #0a100a;
+    --forest-soft: #1f2c1c;
+    --ivory: #faf5e7;
+    --ivory-soft: #e8e2d0;
+    --paper-light: #f5ede0;
+    --gold: #c89a3e;
+    --gold-pale: #e8c878;
+    --gold-glow: #f4d987;
+    --rust: #c75c3e;
+    --rust-deep: #8a3a20;
+    --sage: #6b8a5a;
+    --stone: #6b6863;
+    --line: rgba(250,245,231,0.12);
+    --line-strong: rgba(250,245,231,0.25);
+    --line-dark: rgba(20,32,26,0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--forest); color: var(--ivory);
+    font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400; line-height: 1.6; font-size: 17px;
+    letter-spacing: -0.005em; -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--gold); color: var(--forest); }
+  a { color: inherit; text-decoration: none; }
+  img, svg { display: block; max-width: 100%; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+  em { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    font-weight: 400; color: var(--gold); }
+  .serif { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400; }
+  .mono { font-family: "JetBrains Mono", monospace; letter-spacing: 0.12em;
+    text-transform: uppercase; font-size: 11px; font-weight: 500; }
+
+  /* NAV */
+  nav.top { position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 22px 36px; mix-blend-mode: difference; color: var(--ivory);
+    transition: padding .3s ease; pointer-events: none; }
+  nav.top > * { pointer-events: auto; }
+  nav.top .brand { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 30px; letter-spacing: -0.01em; line-height: 1; }
+  nav.top ul { list-style: none; display: flex; gap: 28px; }
+  nav.top ul a { font-family: "Inter", sans-serif; font-size: 12px;
+    letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500;
+    opacity: 0.85; transition: opacity .2s; }
+  nav.top ul a:hover { opacity: 1; }
+  nav.top ul a.cta { color: var(--gold-pale); opacity: 1;
+    border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+  @media (max-width: 800px) {
+    nav.top { padding: 16px 18px; }
+    nav.top ul { display: none; }
+  }
+
+  /* HERO */
+  .hero { position: relative; height: 100vh; min-height: 720px;
+    overflow: hidden; color: var(--ivory); background: var(--forest-deep); }
+  .hero-photo { position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(180deg, rgba(10,16,10,0.4) 0%, rgba(10,16,10,0.3) 40%, rgba(10,16,10,0.92) 100%),
+      url('img/ballik-000.png');
+    background-size: cover; background-position: center;
+    transform: scale(1.04);
+    animation: heroDrift 30s ease-in-out infinite alternate; }
+  @keyframes heroDrift {
+    from { transform: scale(1.04) translate(0,0); }
+    to   { transform: scale(1.08) translate(-1%, -2%); }
+  }
+  .hero-content { position: absolute; inset: 0; z-index: 3;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 8vw 18vh 8vw; }
+  .hero-eyebrow { font-family: "Inter", sans-serif; font-size: 11px;
+    letter-spacing: 0.28em; text-transform: uppercase; opacity: 0.9;
+    margin-bottom: 26px; font-weight: 500; color: var(--gold-pale); }
+  .hero h1 { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: clamp(72px, 14vw, 200px);
+    line-height: 0.92; letter-spacing: -0.025em;
+    margin-bottom: 30px; font-weight: 400; color: var(--ivory); }
+  .hero h1 em { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    color: var(--gold); font-weight: 400; }
+  .hero-lede { max-width: 540px; font-size: clamp(18px, 1.5vw, 22px);
+    line-height: 1.5; opacity: 0.9; font-weight: 400; color: var(--ivory);
+    font-style: italic; font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  .hero-lede em { color: var(--gold-pale); }
+  .hero-meta { position: absolute; bottom: 36px; left: 8vw; right: 8vw;
+    display: flex; justify-content: space-between; align-items: flex-end;
+    font-family: "Inter", sans-serif; font-size: 10px; font-weight: 500;
+    letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.75;
+    z-index: 3; color: var(--ivory); }
+  .hero-meta strong { color: var(--gold); font-weight: 500; }
+  .scroll-hint { display: flex; align-items: center; gap: 12px; }
+  .scroll-hint .arr { width: 22px; height: 1px; background: currentColor;
+    position: relative; }
+  .scroll-hint .arr:after { content: ""; position: absolute; right: 0;
+    top: -3px; width: 7px; height: 7px; border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor; transform: rotate(-45deg); }
+
+  /* SECTION */
+  section { padding: 140px 8vw; position: relative; }
+  .max-wide { max-width: 1200px; margin: 0 auto; }
+  section.forest { background: var(--forest); color: var(--ivory); }
+  section.deep { background: var(--forest-deep); color: var(--ivory); }
+  section.soft { background: var(--forest-soft); color: var(--ivory); }
+  section.gold { background: var(--gold); color: var(--forest-deep); }
+  section.cream { background: var(--paper-light); color: var(--forest-deep); }
+
+  .sec-label { font-family: "Inter", sans-serif; font-size: 11px;
+    letter-spacing: 0.28em; text-transform: uppercase; font-weight: 500;
+    color: var(--gold); margin-bottom: 22px; display: block; }
+  .cream .sec-label { color: var(--rust-deep); }
+  .gold .sec-label { color: var(--forest-deep); opacity: 0.75; }
+
+  h2.display { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: clamp(48px, 8vw, 120px); line-height: 0.98;
+    letter-spacing: -0.022em; margin-bottom: 0.4em; font-weight: 400; }
+  h2.display em { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    color: var(--gold); font-weight: 400; }
+  .cream h2.display em { color: var(--rust); }
+  .gold h2.display em { color: var(--forest-deep); }
+
+  .prose { max-width: 580px; font-size: 18px; line-height: 1.65; font-weight: 400; }
+  .prose p { margin-bottom: 1.2em; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose em { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    color: var(--gold); font-weight: 400; font-size: 1.05em; }
+  .cream .prose em { color: var(--rust); }
+  .gold .prose em { color: var(--forest-deep); }
+
+  .prose .lede { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: clamp(24px, 2vw, 30px); line-height: 1.35;
+    letter-spacing: -0.005em; margin-bottom: 1.4em;
+    font-weight: 400; font-style: italic; }
+  .prose .drop { float: left; font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-style: italic; font-weight: 400; font-size: 112px; line-height: 0.82;
+    padding: 10px 18px 0 0; color: var(--gold); }
+  .cream .prose .drop { color: var(--rust); }
+  .gold .prose .drop { color: var(--forest-deep); }
+  .prose .subhead { font-family: "Inter", sans-serif; font-weight: 500;
+    font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase;
+    margin: 2.4em 0 1.1em; color: var(--gold); display: block; opacity: 0.85; }
+  .cream .prose .subhead { color: var(--rust); }
+  .prose .pullquote { display: block; margin: 1.8em -2vw 1.8em 0;
+    padding: 12px 0 12px 28px; font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-style: italic; font-weight: 400;
+    font-size: clamp(28px, 2.6vw, 38px); line-height: 1.22;
+    letter-spacing: -0.012em; color: var(--gold);
+    border-left: 2px solid var(--gold); }
+  .cream .prose .pullquote { color: var(--rust); border-left-color: var(--rust); }
+  .prose .pullquote .src { display: block; margin-top: 14px;
+    font-family: "Inter", sans-serif; font-size: 11px; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    font-style: normal; opacity: 0.75; color: inherit; }
+  .prose .divider { display: block; width: 60px; height: 1px;
+    background: currentColor; opacity: 0.3; margin: 2em 0; border: 0; }
+  .prose .aside { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    font-weight: 400; font-size: 17px; line-height: 1.5;
+    opacity: 0.7; padding: 8px 0 8px 18px;
+    border-left: 1px solid currentColor; margin: 1.5em 0; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6vw; align-items: center; }
+  .two-col.left-narrow { grid-template-columns: 0.85fr 1.15fr; }
+  .two-col.right-narrow { grid-template-columns: 1.15fr 0.85fr; }
+  @media (max-width: 900px) { .two-col, .two-col.left-narrow, .two-col.right-narrow { grid-template-columns: 1fr; gap: 40px; } }
+
+  .photo { position: relative; overflow: hidden; background: var(--forest-deep);
+    border: 1px solid var(--line); }
+  .photo img { width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 1.4s cubic-bezier(.22,.61,.36,1); }
+  .photo:hover img { transform: scale(1.04); }
+  .photo.aspect-43 { aspect-ratio: 4/3; }
+  .photo.aspect-34 { aspect-ratio: 3/4; }
+  .photo .cap { position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 18px 22px; color: var(--ivory);
+    font-family: "Inter", sans-serif; font-size: 10px; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 100%); }
+
+  .photo-bleed { width: 100vw; margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%); height: 70vh; min-height: 480px;
+    position: relative; overflow: hidden; background: var(--forest-deep); }
+  .photo-bleed img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-bleed:after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      linear-gradient(180deg, transparent 0%, transparent 35%, rgba(10,16,10,0.55) 75%, rgba(10,16,10,0.9) 100%),
+      radial-gradient(ellipse at 25% 90%, rgba(10,16,10,0.6) 0%, transparent 60%); }
+  .photo-bleed .quote { position: absolute; left: 8vw; right: 8vw; bottom: 70px;
+    color: var(--ivory); font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-style: italic; font-size: clamp(28px, 3.6vw, 50px); line-height: 1.18;
+    max-width: 1000px; z-index: 2; font-weight: 400;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.9), 0 4px 24px rgba(0,0,0,0.7); }
+  .photo-bleed .quote em { color: var(--gold-pale); }
+  .photo-bleed .quote .src { display: block; margin-top: 22px;
+    font-family: "Inter", sans-serif; font-size: 11px; font-weight: 500;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    opacity: 0.9; font-style: normal; color: var(--gold-pale);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 40px; margin: 70px 0 0; padding-top: 60px;
+    border-top: 1px solid var(--line); }
+  .stat-big { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400;
+    font-size: clamp(64px, 8vw, 110px); line-height: 1;
+    letter-spacing: -0.035em; color: var(--ivory); }
+  .stat-big em { font-style: italic; color: var(--gold); }
+  .stat-lbl { font-family: "Inter", sans-serif; font-size: 10px; font-weight: 500;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    margin-top: 14px; opacity: 0.7; line-height: 1.5; }
+  @media (max-width: 800px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+
+  .neighbor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px; margin-top: 50px; background: var(--line); border: 1px solid var(--line); }
+  .neighbor-grid .cell { background: var(--forest-soft); padding: 22px 24px;
+    transition: background .3s; }
+  .neighbor-grid .cell:hover { background: var(--forest); }
+  .neighbor-grid .cell .role { font-family: "Inter", sans-serif;
+    font-weight: 500; font-size: 16px; margin-bottom: 4px; line-height: 1.2;
+    color: var(--ivory); }
+  .neighbor-grid .cell .count { font-family: "Inter", sans-serif; font-size: 10px;
+    font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); }
+
+  .lineage { margin-top: 60px; padding: 50px 0;
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; align-items: start; }
+  .lineage .step { padding-top: 28px; position: relative; }
+  .lineage .step:before { content: ""; position: absolute; top: 0; left: 0;
+    right: 0; height: 1px; background: var(--gold); opacity: 0.6; }
+  .lineage .step .yr { font-family: "Inter", sans-serif; font-size: 10px;
+    font-weight: 500; letter-spacing: 0.22em; color: var(--gold);
+    margin-bottom: 14px; }
+  .lineage .step h4 { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    font-weight: 400; font-size: 24px; line-height: 1.15; margin-bottom: 8px;
+    letter-spacing: -0.01em; color: var(--ivory); }
+  .lineage .step p { font-family: "Inter", sans-serif; font-size: 13px;
+    line-height: 1.55; opacity: 0.7; font-weight: 400; }
+  @media (max-width: 800px) { .lineage { grid-template-columns: 1fr; gap: 36px; } }
+
+  .triptych { display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px; margin-top: 60px; }
+  @media (max-width: 800px) { .triptych { grid-template-columns: 1fr; } }
+  .triptych .photo { aspect-ratio: 3/4; }
+  .aroma-strip { margin-top: 60px; padding: 40px 0;
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 22px; align-items: center; }
+  .aroma-strip .item { text-align: center; }
+  .aroma-strip .item .name { font-family: "Inter", sans-serif;
+    font-weight: 500; font-size: 16px; margin-bottom: 4px; color: var(--gold-pale); }
+  .aroma-strip .item .lat { font-family: "Inter", sans-serif;
+    font-size: 9px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+    opacity: 0.55; }
+
+  .pilots { margin-top: 60px; }
+  .pilot { display: grid; grid-template-columns: 1fr 1.2fr;
+    gap: 50px; padding: 60px 0; border-top: 1px solid var(--line);
+    align-items: center; }
+  .pilot:last-child { border-bottom: 1px solid var(--line); }
+  .pilot.flip { grid-template-columns: 1.2fr 1fr; }
+  .pilot.flip .pilot-text { order: -1; }
+  .pilot .pilot-text .num { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-style: italic; font-size: 80px; line-height: 1; color: var(--gold);
+    margin-bottom: 14px; font-weight: 400; }
+  .pilot h3 { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400;
+    font-size: 36px; line-height: 1.1; margin-bottom: 14px;
+    letter-spacing: -0.015em; color: var(--ivory); }
+  .pilot .pmeta { font-family: "Inter", sans-serif; font-size: 11px;
+    font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+    opacity: 0.7; margin-bottom: 18px; color: var(--gold-pale); }
+  .pilot .pbody { font-size: 16px; line-height: 1.6; opacity: 0.85; }
+  .pilot .invest { display: inline-block; margin-top: 18px;
+    font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    font-size: 24px; color: var(--gold);
+    border-top: 1px solid var(--gold); padding-top: 10px; }
+  @media (max-width: 800px) {
+    .pilot, .pilot.flip { grid-template-columns: 1fr; gap: 24px; }
+    .pilot.flip .pilot-text { order: 0; }
+  }
+
+  .scarcity { margin-top: 50px; padding: 28px 32px;
+    background: rgba(200,154,62,0.08); border-left: 3px solid var(--gold);
+    font-family: "Inter", sans-serif; font-size: 13px; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    line-height: 1.8; }
+  .scarcity strong { color: var(--gold); font-weight: 600; }
+
+  .inquiry-form { background: var(--forest-deep); padding: 56px;
+    margin-top: 50px; color: var(--ivory); }
+  .inquiry-form .field { display: block; margin-bottom: 28px; }
+  .inquiry-form .field label { display: block; font-family: "Inter", sans-serif;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 10px; opacity: 0.75; color: var(--gold-pale); }
+  .inquiry-form .field input,
+  .inquiry-form .field textarea,
+  .inquiry-form .field select {
+    width: 100%; padding: 14px 0; background: transparent;
+    border: 0; border-bottom: 1px solid var(--line-strong);
+    font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic; font-size: 22px;
+    color: var(--ivory); outline: none; transition: border-color .2s; }
+  .inquiry-form .field input:focus,
+  .inquiry-form .field textarea:focus,
+  .inquiry-form .field select:focus { border-bottom-color: var(--gold); }
+  .inquiry-form .field input::placeholder,
+  .inquiry-form .field textarea::placeholder { color: var(--stone); opacity: 0.5; font-style: italic; }
+  .inquiry-form .field textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
+  .inquiry-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  @media (max-width: 700px) { .inquiry-form { padding: 32px 24px; } .inquiry-form .row { grid-template-columns: 1fr; } }
+  .inquiry-form .submit-row { display: flex; justify-content: space-between;
+    align-items: center; gap: 24px; flex-wrap: wrap; margin-top: 16px; }
+  .inquiry-form .submit-row .small { font-family: "Inter", sans-serif;
+    font-size: 11px; font-weight: 400; letter-spacing: 0.1em;
+    opacity: 0.65; max-width: 320px; line-height: 1.6; color: var(--ivory); }
+  .btn { display: inline-block; padding: 18px 40px;
+    background: var(--gold); color: var(--forest-deep); border: 0;
+    font-family: "Inter", sans-serif; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    border-radius: 0; transition: background .2s, transform .2s; }
+  .btn:hover { background: var(--gold-pale); transform: translateY(-1px); }
+
+  footer { padding: 80px 8vw 40px; background: var(--forest-deep); color: var(--ivory);
+    border-top: 1px solid var(--line); }
+  footer .ft-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px; margin-bottom: 60px; max-width: 1200px; margin-left: auto; margin-right: auto; }
+  @media (max-width: 800px) { footer .ft-grid { grid-template-columns: 1fr 1fr; gap: 40px; } }
+  footer h5 { font-family: "Inter", sans-serif; font-size: 11px; font-weight: 500;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold-pale); margin-bottom: 20px; }
+  footer .ft-brand { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 96px; line-height: 0.92; letter-spacing: -0.02em; margin-bottom: 18px;
+    font-weight: 400; color: var(--ivory); }
+  footer .ft-brand em { font-style: italic; color: var(--gold); }
+  footer .ft-tagline { opacity: 0.75; font-size: 16px; max-width: 340px;
+    line-height: 1.55; font-style: italic; font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  footer ul { list-style: none; padding: 0; }
+  footer ul li { padding: 6px 0; font-size: 14px; opacity: 0.85; }
+  footer ul li a:hover { color: var(--gold); }
+  footer .legal { padding-top: 30px; border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: "Inter", sans-serif; font-size: 10px; font-weight: 500;
+    letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.55;
+    max-width: 1200px; margin: 0 auto; flex-wrap: wrap; gap: 16px; }
+
+  .reveal { opacity: 0; transform: translateY(28px);
+    transition: opacity 1.2s cubic-bezier(.22,.61,.36,1),
+                transform 1.2s cubic-bezier(.22,.61,.36,1); }
+  .reveal.in { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <a href="#top" class="brand">Ballık</a>
+  <ul>
+    <li><a href="#hikaye">Hikaye</a></li>
+    <li><a href="#komsular">Komşular</a></li>
+    <li><a href="#mimari">Mimari</a></li>
+    <li><a href="#pilotlar">Pilotlar</a></li>
+    <li><a href="ballik_market.html">Pazar</a></li>
+    <li><a href="ballik_konsept.html">Konsept</a></li>
+    <li><a href="ballik_members.html">Üye Girişi</a></li>
+    <li><a href="#sorgu" class="cta">Sorgu</a></li>
+  </ul>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-photo"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Burdur · Altınyayla · 1.050 - 1.600 m</p>
+    <h1>Bir köy<br><em>yeniden</em><br>örülüyor.</h1>
+    <p class="hero-lede"><em>Modern</em> bir köy hayali.</p>
+  </div>
+  <div class="hero-meta">
+    <div><strong>BALLIK · ALTINYAYLA · BURDUR</strong></div>
+    <div class="scroll-hint">aşağı in <span class="arr"></span></div>
+  </div>
+</header>
+
+<!-- HIKAYE -->
+<section class="forest">
+  <div class="max-wide">
+    <div class="two-col">
+      <div class="reveal">
+        <h2 class="display"><em>Bir tatil yeri</em><br>değil.</h2>
+        <div class="prose" style="margin-top:30px;">
+          <p class="lede"><span class="drop">B</span>allık bir <em>topluluk toprağı</em>. Yüz aileden fazla, kendi evini ayrı ayrı kuran ama nefesini birlikte alan bir köy.</p>
+          <p>Mimar, doktor, müzisyen, çiftçi, sinemacı, akademisyen, avukat, yazılımcı. Hepsi aynı dağın eteğinde, ortak bir karar düzeni altında.</p>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="photo aspect-43">
+          <img src="img/ballik-011.jpg" alt="Ballık'ta sonbahar yürüyüşü">
+          <div class="cap">Sonbahar · Kasım 2024</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="photo-bleed">
+  <img src="img/ballik-051.jpg" alt="Dağ vadisinde taş evler">
+  <div class="quote">
+    Eviniz, bin yıldır aynı yamaca <em>güneşin değdiği</em> yerde.
+    <span class="src">Dağ vadisi, geleneksel taş evler</span>
+  </div>
+</div>
+
+
+<section class="forest" id="komsular">
+  <div class="max-wide">
+    <span class="sec-label">01 · Komşular</span>
+    <h2 class="display">Yan parselde<br><em>kim</em> olabilir?</h2>
+    <div class="prose reveal" style="margin-top:30px;">
+      <p>Bir araziye değer biçmenin en gerçek yolu komşularını saymaktır. Ballık'ta yüzü aşkın aile, üç yüz dönümün üzerinde toprak, on beş farklı disiplin. <em>Hayat zaten burada.</em></p>
+    </div>
+
+    <div class="triptych reveal" style="margin-top:60px;">
+      <div class="photo"><img src="img/ballik-048.jpg" alt="Yamaçta sinemacı"><div class="cap">Saha çekimi · Yamaç</div></div>
+      <div class="photo"><img src="img/ballik-046.jpg" alt="Açık hava yoga"><div class="cap">Açık hava yoga · Yaz</div></div>
+      <div class="photo"><img src="img/ballik-047.jpg" alt="Kaya tırmanışı"><div class="cap">Kaya tırmanışı · Kanyon</div></div>
+    </div>
+
+    <div class="stats reveal">
+      <div><div class="stat-big">100<em>+</em></div><div class="stat-lbl">Toprak sahibi</div></div>
+      <div><div class="stat-big">300<em>+</em></div><div class="stat-lbl">Dönüm</div></div>
+      <div><div class="stat-big">34<em>/</em>72</div><div class="stat-lbl">Aktif mevki</div></div>
+      <div><div class="stat-big">15</div><div class="stat-lbl">Disiplin ailesi</div></div>
+    </div>
+
+    <div class="neighbor-grid reveal">
+      <div class="cell"><div class="role">Mimar</div><div class="count">12 +</div></div>
+      <div class="cell"><div class="role">Doktor</div><div class="count">9 +</div></div>
+      <div class="cell"><div class="role">Müzisyen</div><div class="count">10 +</div></div>
+      <div class="cell"><div class="role">Sinemacı</div><div class="count">8 +</div></div>
+      <div class="cell"><div class="role">Şef</div><div class="count">6 +</div></div>
+      <div class="cell"><div class="role">Yazılımcı</div><div class="count">7 +</div></div>
+      <div class="cell"><div class="role">Akademisyen</div><div class="count">5 +</div></div>
+      <div class="cell"><div class="role">Avukat</div><div class="count">4 +</div></div>
+      <div class="cell"><div class="role">Yoga</div><div class="count">11 +</div></div>
+      <div class="cell"><div class="role">Çiftçi</div><div class="count">5 +</div></div>
+      <div class="cell"><div class="role">Yatırımcı</div><div class="count">15 +</div></div>
+      <div class="cell"><div class="role">Kaptan</div><div class="count">4 +</div></div>
+    </div>
+
+    <div class="scarcity reveal">
+      <strong>Köyün 72 mevkisinin 34'ünde komşular yerleşti.</strong> Kalan mevkilerde sınırlı parsel, davet ve sorgu yoluyla değerlendiriliyor.
+    </div>
+  </div>
+</section>
+
+<!-- MIMARI -->
+<div class="photo-bleed">
+  <img src="img/ballik-050.jpg" alt="Ballık köyünün havadan görünüşü">
+  <div class="quote">
+    Yetmiş iki mevki, yüzü aşkın aile, üç yüz dönümün üzerinde toprak. Hepsi <em>tek bir köyün</em> etrafında.
+    <span class="src">Ballık köyü, Altınyayla, Burdur</span>
+  </div>
+</div>
+
+<section class="deep" id="hikaye">
+  <div class="max-wide">
+    <span class="sec-label">02 · Hikaye</span>
+    <div class="two-col right-narrow">
+      <div class="reveal">
+        <h2 class="display">Buranın adı<br>bir zamanlar<br><em>Kabalia</em>'ydı.</h2>
+        <div class="prose" style="margin-top:30px;">
+          <p class="lede"><span class="drop">T</span>oprak hafızalıdır. Burada bir parsel almak sadece tapu almak değil; üstünde yürüyen bütün soyların bir parçası olmaktır.</p>
+          <span class="subhead">Kabalia, dört şehirden bir birlik</span>
+          <p>Bu yamaç antik çağda <em>Kabalia</em>, Roma çağında <em>Kibyratis</em> adıyla bilinirdi. Kibyra, Boubon, Balboura ve Oinoanda dört şehirden oluşan bir birlik kurdular.</p>
+          <blockquote class="pullquote">Kibyra otuz bin piyade çıkarabildiği için kararlarda iki oy taşırdı; diğer üç şehir birer.<span class="src">Strabon · Coğrafya XIII</span></blockquote>
+          <p>Bu küçük federal düzen MÖ 82'de Romalı general Murena tarafından dağıtıldı. Ama oylama fikri orada kalmadı: Likya Birliği'ne sızdı, oradan Montesquieu'nun masasına, oradan Madison ve Hamilton'ın federalist makalelerine, oradan ABD anayasasına.</p>
+          <hr class="divider">
+          <p class="aside">Yamaç hâlâ aynı yamaç. Sadece bugün üstünde yürüyenler değişti.</p>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="photo aspect-43">
+          <img src="img/ballik-008.jpg" alt="Kibyra antik kenti">
+          <div class="cap">Kibyra antik kenti · Gölhisar, Burdur</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lineage reveal">
+      <div class="step"><div class="yr">MÖ 2.-1. YY</div><h4>Kabalis</h4><p>Kibyra 2 oy, diğer üç şehir 1'er oy.</p></div>
+      <div class="step"><div class="yr">MÖ 82</div><h4>Likya Birliği</h4><p>Murena birliği dağıtır.</p></div>
+      <div class="step"><div class="yr">1748</div><h4>Montesquieu</h4><p><em>De l'esprit des lois</em></p></div>
+      <div class="step"><div class="yr">1788</div><h4>Federalist</h4><p>Madison &amp; Hamilton</p></div>
+      <div class="step"><div class="yr">2026</div><h4>Ballık</h4><p>Antik oy, bugünün toprağında.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MAŞTA -->
+<section class="soft" id="pilotlar">
+  <div class="max-wide">
+    <span class="sec-label">03 · İşler yürüyor</span>
+    <h2 class="display">Vaat değil,<br><em>somut.</em></h2>
+    <p class="prose reveal" style="margin-top:30px;">Bir ekoköyü satmak en kolay, hâlâ kâğıt üstündeyken olur. Ballık o aşamayı geçti. Aşağıdaki dört pilot şu an arazide görülebilir.</p>
+
+    <div class="pilots">
+      <div class="pilot reveal">
+        <div class="photo aspect-43"><img src="img/ballik-012.jpg" alt="Aromatik tarım sahası"><div class="cap">255/43 · saha</div></div>
+        <div class="pilot-text">
+          <div class="num">01</div>
+          <h3>255/43 Kumluçukur · Aromatik Tarım</h3>
+          <div class="pmeta">~1.000 m² · Kasım 2025'te toprağa girdi</div>
+          <p class="pbody">Bin lavanta fidesi, yirmi beş metrekare Maşta Sırası koruma alanı, kuşburnu çiti, doğu meşeliği boyunca sekiz arı kovanı.</p>
+          <span class="invest">Pilot yatırımı · ₺141.700</span>
+        </div>
+      </div>
+
+      <div class="pilot flip reveal">
+        <div class="pilot-text">
+          <div class="num">02</div>
+          <h3>276/16 Bel · Sıkıştırılmış Toprak Ev</h3>
+          <div class="pmeta">Ballık'ın kendi kiliyle · ek bağlayıcı yok</div>
+          <p class="pbody">Köyün güneybatı girişinde, sahanın kendi toprağıyla inşa edilen ilk sıkıştırılmış toprak modeli. 40-60 cm monolitik duvar, yeşil çatı.</p>
+        </div>
+        <div class="photo aspect-43"><img src="img/ballik-021.jpg" alt="Karlı ev"><div class="cap">276/16 Bel · Kış 2025</div></div>
+      </div>
+
+      <div class="pilot reveal">
+        <div class="photo aspect-43"><img src="img/ballik-018.jpg" alt="Hayrat çeşme"><div class="cap">Hayrat ve ortak alanlar</div></div>
+        <div class="pilot-text">
+          <div class="num">03</div>
+          <h3>276/13 Bel · Sosyal Kulüp</h3>
+          <div class="pmeta">Ortak yemek, müzik geceleri, konsey buluşmaları</div>
+          <p class="pbody">Sıkıştırılmış Toprak Ev'in komşusu. Sanatçı misafirler için yumuşak bir meydan, kolektifin ev içi sosyal alanı.</p>
+        </div>
+      </div>
+
+      <div class="pilot flip reveal">
+        <div class="pilot-text">
+          <div class="num">04</div>
+          <h3>Samandamı · Atölye Domları</h3>
+          <div class="pmeta">5 dönüm · Koyunkıralanı + ekoköy kavşağı</div>
+          <p class="pbody">Dört metre çapında iki çelik dome, su geçirmez membran ve ahşap iç detaylarla dönüştürülür. Karma kullanım: aromatik distilasyon, küçük tohum bankası, kayıt odası.</p>
+        </div>
+        <div class="photo aspect-43"><img src="img/ballik-027.jpg" alt="Atölye dome"><div class="cap">Samandamı · Atölye</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SORGU -->
+<section class="deep" id="mimari">
+  <div class="max-wide">
+    <span class="sec-label">04 · Mimari</span>
+    <h2 class="display"><em>Eviniz</em><br>nasıl olacak?</h2>
+    <p class="prose reveal" style="margin-top:30px; opacity:0.92;">Ballık'ta her ev kendi parseline göre yapılır: kendi eğimine, kendi ışığına, kendi rüzgârına. Ama iki ortak yapı dilinden birini konuşur: <em>Likya tipi ahşap</em> ya da <em>sıkıştırılmış toprak</em>. Her ev kendi yüzünü taşır, köy bir bütün olarak ayakta durur.</p>
+
+    <div class="two-col left-narrow" style="margin-top:80px; align-items:start;">
+      <div class="reveal">
+        <div class="photo aspect-34">
+          <img src="img/ballik-021.jpg" alt="Kar altında taş ev">
+          <div class="cap">Geleneksel Ballık evi · Kış 2025</div>
+        </div>
+      </div>
+      <div class="reveal">
+        <h3 class="serif" style="font-size:48px; margin-bottom:16px; color:var(--gold); letter-spacing:-0.02em; font-style: italic;">Likya tipi ahşap ev</h3>
+        <p class="prose">Çivisiz geçme tekniği, taş temel, sedir ve ardıç taşıyıcı. Yüzyıllar sonra sivil bir mimari yeniden canlanır. Dikdörtgen plan, geniş saçak, ahşabı açığa çıkaran cephe.</p>
+
+        <h3 class="serif" style="font-size:48px; margin:50px 0 16px; color:var(--gold); letter-spacing:-0.02em; font-style: italic;">Sıkıştırılmış toprak ev</h3>
+        <p class="prose">Ballık toprağı yeterli kil içerir; ek bağlayıcı gerekmez. Eviniz, üstünde durduğu topraktan inşa edilebilir. 40-60 cm monolitik duvar, yeşil çatı, kış ısısını yaz serinliğine taşıyan termal kütle.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="photo-bleed">
+  <img src="img/ballik-016.png" alt="Gün batımında taş su yalağı">
+  <div class="quote">
+    Su altyapı değil, <em>canlı bir sistemdir.</em> Roma hidrolojisinin bilgeliği ile yer altı sarnıçları aynı masaya oturur.
+    <span class="src">Geleneksel taş yalak · Gün batımı</span>
+  </div>
+</div>
+
+<!-- TOPRAK -->
+<section class="forest" id="toprak">
+  <div class="max-wide">
+    <span class="sec-label">05 · Toprak</span>
+    <h2 class="display"><em>Toprak</em><br>ne sunuyor?</h2>
+    <div class="prose reveal" style="margin-top:30px;">
+      <p class="lede"><span class="drop">B</span>allık toprağı kireçtaşı karışımlı kırmızı topraktır: yüksek drenajlı, güneşli, soğuk kışla sertleşmiş. Akdeniz aromatiklerinin bayıldığı bir zemin.</p>
+      <span class="subhead">Yıl boyu nektar akışı</span>
+      <p>Bahar başında lavanta açar. Yaz ortasında Maşta Sırası. Sonbahar başında kuşburnu. Bu üçü arıların görünmeyen işçiliği için kesintisiz bir takvim kurar.</p>
+      <blockquote class="pullquote">Bal kovanları bahçenizin verimliliğini yaklaşık <em>%25</em> artırır.<span class="src">Pilot 01 · Kumluçukur saha notu</span></blockquote>
+    </div>
+
+    <div class="triptych reveal">
+      <div class="photo"><img src="img/ballik-036.jpg" alt="Bal kovanı"><div class="cap">Bal · Dağda yapılır</div></div>
+      <div class="photo"><img src="img/ballik-033.jpg" alt="Safran hasadı"><div class="cap">Safran · Hasat</div></div>
+      <div class="photo"><img src="img/ballik-053.jpg" alt="Bahar çayırları"><div class="cap">Bahar çayırları</div></div>
+    </div>
+
+    <div class="aroma-strip reveal">
+      <div class="item"><div class="name">Bal</div><div class="lat">honey · mel</div></div>
+      <div class="item"><div class="name">Kuzugöbeği</div><div class="lat">morel</div></div>
+      <div class="item"><div class="name">Safran</div><div class="lat">saffron</div></div>
+      <div class="item"><div class="name">Maşta Sırası</div><div class="lat">carum carvi</div></div>
+      <div class="item"><div class="name">Kekik</div><div class="lat">thyme</div></div>
+      <div class="item"><div class="name">Lavanta</div><div class="lat">lavandula</div></div>
+      <div class="item"><div class="name">Altınotu</div><div class="lat">helichrysum</div></div>
+      <div class="item"><div class="name">Adaçayı</div><div class="lat">salvia</div></div>
+      <div class="item"><div class="name">Niaouli</div><div class="lat">melaleuca</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PILOTLAR -->
+<section class="soft">
+  <div class="max-wide">
+    <div class="two-col left-narrow">
+      <div class="reveal">
+        <div class="photo aspect-34">
+          <img src="img/ballik-014.jpg" alt="Ballık çocukları">
+          <div class="cap">Köyün çocukları</div>
+        </div>
+      </div>
+      <div class="reveal">
+        <span class="sec-label">06 · Ad</span>
+        <h2 class="display"><em>Maşta,</em><br>yamacın<br>eski adı.</h2>
+        <div class="prose" style="margin-top:24px;">
+          <p>Köyün eski adı <em>Maşta</em>'ydı. Yüksek rakım, kış uzun. Dağda büyüyen endemik bir yabani kimyon türü hâlâ <em>Maşta Sırası</em> adıyla anılır; bitki adını köyden almıştır.</p>
+          <p>Yörükler bu yaylalara on üçüncü yüzyıldan beri çıkıyor. Eviniz bu bin yıllık ritmin üstüne kurulur.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KOMSULAR -->
+<section class="gold" id="sorgu">
+  <div class="max-wide">
+    <div class="two-col left-narrow" style="align-items:start;">
+      <div class="reveal" style="position:sticky; top:120px;">
+        <div class="photo aspect-34">
+          <img src="img/ballik-045.jpg" alt="Orman yolu">
+          <div class="cap">Ballık'a giden yol</div>
+        </div>
+      </div>
+      <div class="reveal">
+        <span class="sec-label" style="color: var(--forest-deep); opacity: 0.85;">07 · İlk konuşma</span>
+        <h2 class="display"><em>Sorgu</em><br>açık.</h2>
+        <div class="prose" style="margin-top:24px;">
+          <p class="lede">Burada bir tapu satışı yok. Bir komşuluğun yeni üyesini bulması var. Bu yüzden ilk adım bir form değil, bir <em>tanışma</em>.</p>
+          <p>Aşağıdaki kısa formu doldurursanız, kolektifin bir üyesi sizinle iletişime geçer. Cevap, en geç üç hafta içinde.</p>
+        </div>
+
+        <form class="inquiry-form" onsubmit="event.preventDefault(); this.querySelector('.thanks').style.display='block'; this.querySelector('button').style.display='none';">
+          <div class="row">
+            <div class="field"><label>Adınız</label><input type="text" required></div>
+            <div class="field"><label>E-posta</label><input type="email" required></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>Ne yaparsınız?</label><input type="text" required></div>
+            <div class="field"><label>Sizi kim önerdi?</label><input type="text"></div>
+          </div>
+          <div class="field"><label>Birkaç kelimeyle siz</label><textarea rows="4"></textarea></div>
+          <div class="submit-row">
+            <p class="small">Form okunmadan kayda alınmaz. Hiçbir e-posta listesine eklenmezsiniz.</p>
+            <button type="submit" class="btn">Gönder</button>
+          </div>
+          <p class="thanks serif" style="display:none; margin-top:30px; font-style:italic; font-size:24px; color:var(--gold-pale);">Aldık. Üç hafta içinde size geri döneriz.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="ft-grid">
+    <div>
+      <div class="ft-brand">Ballık</div>
+      <div class="ft-tagline">Burdur'un dağlarında bir köy. Yetmiş iki mevki, yüzü aşkın aile, ortak bir karar düzeni.</div>
+    </div>
+    <div>
+      <h5>Sayfalar</h5>
+      <ul>
+        <li><a href="#top">Ana Sayfa</a></li>
+        <li><a href="ballik_konsept.html">Konsept Dosyası</a></li>
+        <li><a href="ballik_market.html">Pazar</a></li>
+        <li><a href="ballik_members.html">Üye Meydanı</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Gezin</h5>
+      <ul>
+        <li><a href="#hikaye">Hikaye</a></li>
+        <li><a href="#komsular">Komşular</a></li>
+        <li><a href="#mimari">Mimari</a></li>
+        <li><a href="#toprak">Toprak</a></li>
+        <li><a href="#pilotlar">Pilotlar</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Adres</h5>
+      <ul>
+        <li>hello@ballik.co</li>
+        <li>Ballık Köyü, Altınyayla / Burdur</li>
+        <li>1.050 - 1.600 m</li>
+      </ul>
+    </div>
+  </div>
+  <div class="legal">
+    <div>© 2026 BALLIK</div>
+    <div style="opacity:0.4; font-size:9px;">B-LEKM · v0.6 · Forest Gold · TR</div>
+    <div>Burdur'da yapıldı</div>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    const n = document.querySelector('nav.top');
+    if (y > 80) n.style.padding = '14px 36px';
+    else n.style.padding = '22px 36px';
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Ballık · Harita</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<style>
+  :root {
+    --forest: #14201a;
+    --forest-deep: #0a100a;
+    --forest-soft: #1f2c1c;
+    --ivory: #faf5e7;
+    --gold: #c89a3e;
+    --gold-pale: #e8c878;
+    --rust: #c75c3e;
+    --sage: #6b8a5a;
+    --stone: #6b6863;
+    --line: rgba(250,245,231,0.12);
+    --line-strong: rgba(250,245,231,0.25);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body { background: var(--forest-deep); color: var(--ivory);
+    font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400; line-height: 1.55; font-size: 14px;
+    letter-spacing: -0.005em; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+  em { font-style: italic; color: var(--gold); font-weight: 400; }
+
+  nav.site { background: var(--forest-deep); color: var(--ivory);
+    padding: 18px 36px; display: flex; align-items: center;
+    justify-content: space-between; gap: 24px;
+    border-bottom: 1px solid var(--line); }
+  nav.site .brand { font-family: "Inter Tight", sans-serif;
+    font-size: 26px; letter-spacing: -0.015em; line-height: 1; }
+  nav.site ul { list-style: none; display: flex; gap: 24px; }
+  nav.site ul a { font-family: "Inter", sans-serif; font-size: 11px;
+    letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500;
+    opacity: 0.8; transition: opacity .2s; }
+  nav.site ul a:hover { opacity: 1; }
+  nav.site ul a.active { opacity: 1; color: var(--gold-pale);
+    border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+  @media (max-width: 900px) {
+    nav.site { padding: 14px 18px; flex-wrap: wrap; gap: 12px; }
+    nav.site ul { gap: 14px; flex-wrap: wrap; }
+  }
+
+  .map-wrap { display: grid; grid-template-columns: 1fr 400px;
+    height: calc(100vh - 60px); }
+  @media (max-width: 900px) {
+    .map-wrap { grid-template-columns: 1fr; grid-template-rows: 1fr 45vh; }
+  }
+
+  #map { width: 100%; height: 100%; background: var(--forest-deep); }
+
+  /* Layer toggle */
+  .layer-toggle { position: absolute; top: 80px; right: 410px; z-index: 500;
+    background: var(--forest-deep); border: 1px solid var(--gold);
+    padding: 6px; display: flex; gap: 0; }
+  @media (max-width: 900px) { .layer-toggle { right: 12px; top: 70px; } }
+  .layer-toggle button { font-family: "Inter", sans-serif; font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500;
+    color: var(--ivory); padding: 8px 12px; border: 0;
+    background: transparent; opacity: 0.6; transition: opacity .2s, background .2s; }
+  .layer-toggle button.active { background: var(--gold); color: var(--forest-deep); opacity: 1; }
+
+  .leaflet-popup-content-wrapper {
+    background: var(--forest-deep); color: var(--ivory);
+    border-radius: 0; border: 1px solid var(--gold);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+  .leaflet-popup-content { margin: 14px 18px; font-family: "Inter Tight", sans-serif; }
+  .leaflet-popup-tip { background: var(--forest-deep); border: 1px solid var(--gold); }
+  .leaflet-popup-close-button { color: var(--gold-pale) !important; font-size: 20px !important; }
+  .leaflet-popup .pop-name { font-size: 16px; font-weight: 500; color: var(--gold-pale);
+    letter-spacing: -0.01em; }
+  .leaflet-popup .pop-owner { font-size: 13px; margin-top: 4px; color: var(--ivory); }
+  .leaflet-popup .pop-area { font-family: "Inter", sans-serif; font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.7;
+    margin-top: 4px; color: var(--ivory); }
+  .leaflet-popup .pop-hint { font-size: 11px; opacity: 0.6;
+    margin-top: 6px; font-style: italic; color: var(--gold-pale); }
+
+  aside.panel { background: var(--forest); border-left: 1px solid var(--line);
+    color: var(--ivory); overflow-y: auto; padding: 28px 26px 80px; }
+  @media (max-width: 900px) {
+    aside.panel { border-left: 0; border-top: 1px solid var(--line); padding: 18px 18px 60px; }
+  }
+  aside.panel h2 { font-family: "Inter Tight", sans-serif;
+    font-weight: 400; font-size: 28px; line-height: 1.1;
+    letter-spacing: -0.025em; margin-bottom: 6px; color: var(--ivory); }
+  aside.panel h2 em { color: var(--gold); font-weight: 500; }
+  aside.panel .meta { font-family: "Inter", sans-serif; font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px; }
+  aside.panel .panel-intro { font-size: 13px; line-height: 1.6;
+    opacity: 0.8; margin-bottom: 24px; }
+  aside.panel .panel-intro em { font-style: italic; color: var(--gold-pale); }
+
+  .mevki-list { list-style: none; padding: 0; margin: 0;
+    border-top: 1px solid var(--line); }
+  .mevki-list li { padding: 12px 0; border-bottom: 1px solid var(--line);
+    cursor: pointer; transition: padding .2s, background .2s;
+    display: grid; grid-template-columns: 1fr auto auto; gap: 12px;
+    align-items: center; }
+  .mevki-list li:hover { padding-left: 8px; background: rgba(200,154,62,0.04); }
+  .mevki-list li .mname { font-size: 14px; font-weight: 500; }
+  .mevki-list li .marea { font-family: "JetBrains Mono", monospace;
+    font-size: 10px; letter-spacing: 0.1em; color: var(--gold-pale);
+    opacity: 0.8; }
+  .mevki-list li .mcount { font-family: "JetBrains Mono", monospace;
+    font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+    opacity: 0.55; padding: 3px 8px; border: 1px solid var(--line); border-radius: 999px; }
+
+  .detail .back { font-family: "Inter", sans-serif; font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500;
+    color: var(--gold); margin-bottom: 16px; display: inline-flex; align-items: center;
+    gap: 6px; padding: 6px 0; }
+  .detail .back:hover { color: var(--gold-pale); }
+  .detail .stats { display: flex; gap: 24px; margin: 16px 0 26px;
+    padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .detail .stat .v { font-family: "Inter Tight", sans-serif;
+    font-size: 28px; font-weight: 400; letter-spacing: -0.025em;
+    line-height: 1; color: var(--gold); font-style: italic; }
+  .detail .stat .l { font-family: "Inter", sans-serif; font-size: 9px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    opacity: 0.6; margin-top: 6px; }
+  .detail .parcels { list-style: none; padding: 0; margin: 0; }
+  .detail .parcels li { padding: 12px 0; border-bottom: 1px dashed var(--line);
+    display: grid; grid-template-columns: 70px 1fr auto; gap: 14px; align-items: start;
+    cursor: pointer; transition: padding .15s, background .15s; }
+  .detail .parcels li:hover { padding-left: 6px; background: rgba(200,154,62,0.04); }
+  .detail .parcels .pno { font-family: "JetBrains Mono", monospace;
+    font-size: 11px; letter-spacing: 0.08em; color: var(--gold-pale);
+    background: var(--forest-soft); padding: 4px 8px; border-radius: 2px;
+    text-align: center; }
+  .detail .parcels .pinfo .owner { font-size: 14px; font-weight: 500; color: var(--ivory); }
+  .detail .parcels .pinfo .field { font-size: 12px; opacity: 0.7; margin-top: 2px;
+    font-family: "Inter Tight", sans-serif; font-style: italic; color: var(--gold-pale); }
+  .detail .parcels .pmarea { font-family: "JetBrains Mono", monospace;
+    font-size: 9px; opacity: 0.55; align-self: center; }
+
+  .summary { display: flex; gap: 18px; margin: 14px 0 22px;
+    padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    flex-wrap: wrap; }
+  .summary .stat .v { font-family: "Inter Tight", sans-serif;
+    font-size: 22px; font-weight: 400; letter-spacing: -0.02em;
+    color: var(--gold); font-style: italic; line-height: 1; }
+  .summary .stat .l { font-family: "Inter", sans-serif; font-size: 9px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    opacity: 0.6; margin-top: 4px; }
+
+  .leaflet-tooltip { background: var(--forest-deep) !important;
+    color: var(--gold-pale) !important; border: 1px solid var(--gold) !important;
+    border-radius: 0 !important; padding: 5px 10px !important;
+    font-family: "Inter", sans-serif !important; font-size: 11px !important;
+    font-weight: 500 !important; letter-spacing: 0.05em !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important; }
+  .leaflet-tooltip-top:before { border-top-color: var(--gold) !important; }
+
+  .leaflet-control-attribution { background: rgba(10,16,10,0.7) !important;
+    color: rgba(250,245,231,0.6) !important; font-size: 10px !important; }
+  .leaflet-control-attribution a { color: var(--gold-pale) !important; }
+
+  /* Source caption */
+  .src-note { font-size: 10px; opacity: 0.55; margin-top: 18px;
+    font-family: "Inter", sans-serif; letter-spacing: 0.04em; line-height: 1.5; }
+  .src-note a { color: var(--gold-pale); border-bottom: 1px dotted currentColor; }
+</style>
+</head>
+<body>
+
+<nav class="site">
+  <a href="index.html" class="brand">Ballık</a>
+  <ul>
+    <li><a href="index.html#hikaye">Hikaye</a></li>
+    <li><a href="index.html#komsular">Komşular</a></li>
+    <li><a href="index.html#mimari">Mimari</a></li>
+    <li><a href="index.html#pilotlar">Pilotlar</a></li>
+    <li><a href="ballik_market.html">Pazar</a></li>
+    <li><a href="ballik_konsept.html">Konsept</a></li>
+    <li><a href="ballik_members.html">Üye Girişi</a></li>
+    <li><a href="index.html#sorgu" style="color: var(--gold-pale); border-bottom: 1px solid currentColor; padding-bottom: 2px; opacity: 1; font-weight: 600;">Sorgu</a></li>
+  </ul>
+</nav>
+
+<div class="map-wrap">
+  <div id="map">
+    <div class="layer-toggle">
+      <button id="t-dark" class="active">Karanlık</button>
+      <button id="t-sat">Uydu</button>
+    </div>
+  </div>
+  <aside class="panel" id="panel">
+    <h2>Tapu &amp; <em>Mevki</em></h2>
+    <div class="meta">Ballık · Altınyayla · Burdur</div>
+    <p class="panel-intro">Otuz üç mevki, iki yüz on dokuz parsel, otuz iki dönümün üzerinde toprak. Koordinatlar <em>Tapu ve Kadastro Genel Müdürlüğü</em>'nden çekildi. Bir mevkiye tıkla, parselleri ve sahiplerini gör.</p>
+
+    <div class="summary">
+      <div class="stat"><div class="v">33</div><div class="l">Mevki</div></div>
+      <div class="stat"><div class="v">219</div><div class="l">Parsel</div></div>
+      <div class="stat"><div class="v">323k</div><div class="l">m²</div></div>
+    </div>
+
+    <div id="list-view">
+      <ul class="mevki-list" id="mlist"></ul>
+      <p class="src-note">Veri kaynağı: <a href="https://parselsorgu.tkgm.gov.tr" target="_blank">parselsorgu.tkgm.gov.tr</a> · Mahalle kodu 39989 · Polygon merkez noktaları otomatik hesaplandı.</p>
+    </div>
+    <div id="detail-view" class="detail" style="display:none;">
+      <a class="back" href="#" onclick="showList(); return false;">← Tüm mevkiler</a>
+      <h2 id="d-name"></h2>
+      <div class="meta" id="d-meta"></div>
+      <div class="stats">
+        <div class="stat"><div class="v" id="d-area"></div><div class="l">m²</div></div>
+        <div class="stat"><div class="v" id="d-count"></div><div class="l">parsel</div></div>
+      </div>
+      <ul class="parcels" id="d-parcels"></ul>
+    </div>
+  </aside>
+</div>
+
+<script>
+const DATA = {"Arpacık":{"area":27161,"parcel_count":30,"lat":36.8574866569204,"lon":29.44741314989178,"parcels":[{"no":"256/104","owner":"Cihan","field":"oyun sektörü, tasarım","alan":"115,33","lat":36.858313333333335,"lon":29.446691666666666,"nitelik":"Tarla"},{"no":"256/62","owner":"Yurdanur","field":"oyun sektörü, tasarım","alan":"2.639,08","lat":36.85680933333333,"lon":29.447406666666666,"nitelik":"Tarla"},{"no":"256/51","owner":"Tuğba","field":"sticker artist","alan":"747,57","lat":36.857267,"lon":29.448035000000004,"nitelik":"Tarla"},{"no":"256/22","owner":"Volkan","field":"inşaat","alan":"1.009,07","lat":36.85827933333334,"lon":29.447892000000003,"nitelik":"Taş Ev Ve Tarlası"},{"no":"256/36","owner":"Volkan","field":"inşaat","alan":"82,87","lat":36.85803000000001,"lon":29.44800166666667,"nitelik":"Tarla"},{"no":"256/35","owner":"Volkan","field":"inşaat","alan":"39,06","lat":36.858008,"lon":29.447932,"nitelik":"Tarla"},{"no":"256/45","owner":"Mert -","field":"","alan":"577,47","lat":36.85789545454546,"lon":29.44791090909091,"nitelik":"Tarla"},{"no":"256/91","owner":"Volkan","field":"inşaat","alan":"420,62","lat":36.856444545454536,"lon":29.446072727272725,"nitelik":"Tarla"},{"no":"256/64","owner":"Fatih Kaptan","field":"yelken denizcilik","alan":"1.706,70","lat":36.857653181818186,"lon":29.446895909090912,"nitelik":"Tarla"},{"no":"256/65","owner":"Fatih Kaptan","field":"yelken denizcilik","alan":"323,25","lat":36.857029,"lon":29.446706,"nitelik":"Tarla"},{"no":"256/68","owner":"Fatih Kaptan","field":"yelken denizcilik","alan":"97,53","lat":36.856988333333334,"lon":29.446605,"nitelik":"Tarla"},{"no":"256/57","owner":"Yeliz","field":"yoga wellness","alan":"1.457,28","lat":36.85729933333334,"lon":29.447314,"nitelik":"Tarla"},{"no":"256/59","owner":"Ayça","field":"permakültür, moda, sinema","alan":"466,36","lat":36.85685375,"lon":29.44782375,"nitelik":"Tarla"},{"no":"256/63","owner":"Emre -","field":"","alan":"2.132,25","lat":36.857060555555556,"lon":29.446971666666666,"nitelik":"Tarla"},{"no":"256/10","owner":"Murat Altuntaş","field":"","alan":"884,61","lat":36.85817083333333,"lon":29.449066666666667,"nitelik":"Tarla"},{"no":"256/52","owner":"Sevgi-Hakan","field":"digital artist","alan":"325,31","lat":36.857293,"lon":29.447875,"nitelik":"Tarla"},{"no":"256/100","owner":"Yurdanur","field":"takı sanat","alan":"1.022,03","lat":36.857368,"lon":29.446274000000006,"nitelik":"Tarla"},{"no":"256/17","owner":"Tekin","field":"","alan":"88,54","lat":36.858266666666665,"lon":29.448561666666667,"nitelik":"Tarla"},{"no":"256/81","owner":"Ceren&Ari","field":"müzik & ekoloji","alan":"1.691,90","lat":36.855801875000004,"lon":29.445723750000003,"nitelik":"Tarla"},{"no":"256/98","owner":"Canan","field":"hostes","alan":"514,72","lat":36.85699909090909,"lon":29.44650818181818,"nitelik":"Tarla"},{"no":"256/4","owner":"Mehmet Ali -","field":"","alan":"1.002,82","lat":36.85893624999999,"lon":29.4484925,"nitelik":"Tarla"},{"no":"256/46","owner":"Hüseyin Bey","field":"emekli asker","alan":"1.320,56","lat":36.857654999999994,"lon":29.447683750000003,"nitelik":"Tarla"},{"no":"256/6","owner":"Esin abla","field":"müteahhit","alan":"755,29","lat":36.85880642857143,"lon":29.44877142857143,"nitelik":"Tarla"},{"no":"256/42","owner":"Tahsin","field":"Mimar","alan":"481,39","lat":36.857853750000004,"lon":29.448373750000002,"nitelik":"Tarla"},{"no":"256/24","owner":"Hüseyin Bey","field":"emekli asker","alan":"160,76","lat":36.85824454545455,"lon":29.447490909090913,"nitelik":"Tarla"},{"no":"256/38","owner":"Onur Çifçi","field":"yoga, editör","alan":"2.685,52","lat":36.857628749999996,"lon":29.44872875,"nitelik":"Tarla"},{"no":"256/103","owner":"Aşkın","field":"","alan":"1.553,52","lat":36.85790727272727,"lon":29.446464545454546,"nitelik":"Tarla"},{"no":"256/43","owner":"Anıl","field":"kakao / müzik","alan":"110,38","lat":36.857958,"lon":29.448282000000006,"nitelik":"Tarla"},{"no":"256/85","owner":"Emre","field":"Çevirmen","alan":"1.483,50","lat":36.85661909090909,"lon":29.445373636363637,"nitelik":"Tarla"},{"no":"256/76","owner":"Anıl","field":"kakao / müzik","alan":"1.265,96","lat":36.855160000000005,"lon":29.446465,"nitelik":"Tarla"}]},"Aşağı Eriçek":{"area":10741,"parcel_count":3,"lat":36.8558303030303,"lon":29.46687312121212,"parcels":[{"no":"308/1","owner":"Mert","field":"ilaç sektörü","alan":"8.898,76","lat":36.85663090909091,"lon":29.466206363636363,"nitelik":"Tarla"},{"no":"312/1","owner":"Tuba","field":"Gonca","alan":"964,12","lat":36.854783000000005,"lon":29.46703,"nitelik":"Tarla"},{"no":"308/3","owner":"Ferhat","field":"yapay zeka teknoloji","alan":"877,88","lat":36.856077,"lon":29.467383,"nitelik":"Tarla"}]},"Aşağı Kaymakçı":{"area":936,"parcel_count":1,"lat":36.89692083333333,"lon":29.43465,"parcels":[{"no":"174/45","owner":"Ayhan","field":"müteahhit","alan":"936,18","lat":36.89692083333333,"lon":29.43465,"nitelik":"Tarla"}]},"Bel":{"area":2991,"parcel_count":3,"lat":36.86090345238095,"lon":29.411472242063493,"parcels":[{"no":"276/13","owner":"Aşkın","field":"","alan":"2.277,52","lat":36.865075,"lon":29.414423333333332,"nitelik":"Tarla"},{"no":"281/5","owner":"Esin","field":"Müteahhit","alan":"406,84","lat":36.8632425,"lon":29.409236250000003,"nitelik":"Tarla"},{"no":"287/7","owner":"Engin","field":"","alan":"306,38","lat":36.854392857142855,"lon":29.41075714285714,"nitelik":"Tarla"}]},"Cirbelli":{"area":3305,"parcel_count":4,"lat":36.8682314957265,"lon":29.45805660790598,"parcels":[{"no":"247/21","owner":"Volkan","field":"inşaat","alan":"607,11","lat":36.86783416666667,"lon":29.45733916666666,"nitelik":"Tarla"},{"no":"247/15","owner":"Ozan","field":"tasarımcı","alan":"751,89","lat":36.86792916666667,"lon":29.45846333333333,"nitelik":"Tarla"},{"no":"247/14","owner":"Erdem -","field":"","alan":"1.281,26","lat":36.868321538461544,"lon":29.45874615384615,"nitelik":"Tarla"},{"no":"247/48","owner":"Erdem -","field":"","alan":"664,29","lat":36.86884111111111,"lon":29.45767777777778,"nitelik":"Tarla"}]},"Dutderesi":{"area":8075,"parcel_count":9,"lat":36.8730680219923,"lon":29.445644324423952,"parcels":[{"no":"229/10","owner":"Ayşe hanım-Cihat bey","field":"eko turizm","alan":"4.234,54","lat":36.874361052631585,"lon":29.445275789473683,"nitelik":"Tarla"},{"no":"229/21","owner":"Ezgi","field":"yoga & wellness","alan":"214,46","lat":36.873042500000004,"lon":29.445188750000003,"nitelik":"Tarla"},{"no":"229/22","owner":"Pelin","field":"sinema","alan":"605,09","lat":36.87317692307692,"lon":29.445360769230767,"nitelik":"Tarla"},{"no":"229/24","owner":"Pelin","field":"sinema","alan":"86,65","lat":36.87291333333333,"lon":29.44549333333333,"nitelik":"Tarla"},{"no":"229/14","owner":"Alp","field":"müzik","alan":"680,19","lat":36.873153333333335,"lon":29.44467416666667,"nitelik":"Tarla"},{"no":"229/29","owner":"Sezgin","field":"kaptan","alan":"579,97","lat":36.87259416666667,"lon":29.4460375,"nitelik":"Tarla"},{"no":"230/4","owner":"Ezgi","field":"yoga & wellness, nlp","alan":"554,93","lat":36.873362,"lon":29.446119999999997,"nitelik":"Tarla"},{"no":"229/26","owner":"Diana","field":"müzik, organizasyon, esnaf","alan":"397,05","lat":36.87287888888889,"lon":29.44628111111111,"nitelik":"Tarla"},{"no":"231/7","owner":"Sezgin","field":"kaptan","alan":"722,47","lat":36.87212999999999,"lon":29.446367499999997,"nitelik":"Tarla"}]},"Elmayanı":{"area":10182,"parcel_count":9,"lat":36.86484711118204,"lon":29.454380596958597,"parcels":[{"no":"249/3","owner":"Şafak","field":"müzik, prodüksiyon","alan":"761,64","lat":36.865541428571426,"lon":29.45387642857143,"nitelik":"Tarla"},{"no":"249/5","owner":"Başak","field":"alp arkadaş","alan":"663,62","lat":36.865506666666676,"lon":29.454178888888887,"nitelik":"Tarla"},{"no":"249/9","owner":"Sıla","field":"alp arkadaş","alan":"502,06","lat":36.86534444444444,"lon":29.45438777777777,"nitelik":"Tarla"},{"no":"249/21","owner":"Tahsin","field":"mimar","alan":"1.861,62","lat":36.86474692307693,"lon":29.454952307692313,"nitelik":"Tarla"},{"no":"250/6","owner":"Umut&Ögem","field":"dj müzisyen","alan":"1.734,09","lat":36.864275,"lon":29.454550000000005,"nitelik":"Tarla"},{"no":"249/20","owner":"Tahsin","field":"mimar","alan":"303,87","lat":36.864592,"lon":29.454697999999997,"nitelik":"Tarla"},{"no":"250/5","owner":"Öncüm","field":"Ögem Kardeş - Asya","alan":"1.509,45","lat":36.86435545454546,"lon":29.454313636363633,"nitelik":"Tarla"},{"no":"250/7","owner":"Sinan&Yiğit","field":"sinan (şef) yiğit (yazar)","alan":"2.253,46","lat":36.86411583333333,"lon":29.454808333333332,"nitelik":"Tarla"},{"no":"250/1","owner":"Ercan","field":"emre'nin (k) arkadaşı","alan":"592,66","lat":36.865146249999995,"lon":29.45366,"nitelik":"Tarla"}]},"Esiri":{"area":15344,"parcel_count":6,"lat":36.90713131876456,"lon":29.46843390850816,"parcels":[{"no":"131/1","owner":"Kutlay","field":"lojistik","alan":"2.844,38","lat":36.91052499999999,"lon":29.468016,"nitelik":"Tarla"},{"no":"132/18","owner":"Gül&Romain","field":"müzik, organizasyon","alan":"2.427,24","lat":36.903578181818176,"lon":29.469418181818185,"nitelik":"Tarla"},{"no":"132/4","owner":"Şafak","field":"müzik prodüksiyon","alan":"4.647,95","lat":36.9071705,"lon":29.467980500000003,"nitelik":"Tarla"},{"no":"132/7","owner":"Sezgin","field":"kaptan","alan":"1.512,18","lat":36.90648923076923,"lon":29.468180769230766,"nitelik":"Tarla"},{"no":"134/1","owner":"Alp","field":"Mr. Frog plak","alan":"1.852,07","lat":36.907177000000004,"lon":29.468585,"nitelik":"Tarla"},{"no":"133/1","owner":"Alp","field":"Mr. Frog plak","alan":"2.059,70","lat":36.907848,"lon":29.468423,"nitelik":"Tarla"}]},"Gavurtarlası":{"area":12148,"parcel_count":11,"lat":36.905659371078286,"lon":29.444706072760173,"parcels":[{"no":"115/20","owner":"Can","field":"sinema & prodüksiyon","alan":"804,18","lat":36.90618444444445,"lon":29.44562444444445,"nitelik":"Tarla"},{"no":"115/21","owner":"Can","field":"sinema & prodüksiyon","alan":"1.381,85","lat":36.906003636363636,"lon":29.445663636363633,"nitelik":"Tarla"},{"no":"115/37","owner":"Deniz","field":"yoga & wellness","alan":"487,26","lat":36.90446444444444,"lon":29.443585555555558,"nitelik":"Tarla"},{"no":"115/38","owner":"Deniz","field":"yoga & wellness","alan":"2.966,79","lat":36.90485875,"lon":29.443901249999996,"nitelik":"Tarla"},{"no":"115/41","owner":"Deniz","field":"yoga & wellness","alan":"241,80","lat":36.90529,"lon":29.44407,"nitelik":"Tarla"},{"no":"115/42","owner":"Deniz","field":"yoga & wellness","alan":"1.612,12","lat":36.90547157894736,"lon":29.443974736842105,"nitelik":"Tarla"},{"no":"115/47","owner":"Tekin","field":"","alan":"487,10","lat":36.90564666666667,"lon":29.444388888888884,"nitelik":"Tarla"},{"no":"115/17","owner":"Mert","field":"medya","alan":"1.910,10","lat":36.90682769230769,"lon":29.445807692307692,"nitelik":"Tarla"},{"no":"115/8","owner":"Murat","field":"mimar","alan":"929,55","lat":36.908079,"lon":29.445761000000005,"nitelik":"Tarla"},{"no":"115/54","owner":"Buse","field":"mimar & tasarım","alan":"576,60","lat":36.906119090909094,"lon":29.443951818181816,"nitelik":"Tarla"},{"no":"115/32","owner":"Aras","field":"marangoz","alan":"750,69","lat":36.903307777777776,"lon":29.445037777777777,"nitelik":"Tarla"}]},"Geymene":{"area":2732,"parcel_count":1,"lat":36.84977111111111,"lon":29.454664444444443,"parcels":[{"no":"253/1","owner":"Aşkın","field":"","alan":"2.732,28","lat":36.84977111111111,"lon":29.454664444444443,"nitelik":"Tarla"}]},"Güneyikli":{"area":4998,"parcel_count":3,"lat":36.903413761904766,"lon":29.447821412698413,"parcels":[{"no":"114/42","owner":"Ortodontist","field":"","alan":"2.622,33","lat":36.90314428571428,"lon":29.447668571428576,"nitelik":"Tarla"},{"no":"114/33","owner":"Murat","field":"mimar","alan":"523,89","lat":36.903659000000005,"lon":29.446409,"nitelik":"Tarla"},{"no":"113/9","owner":"Murat","field":"mimar","alan":"1.852,01","lat":36.90343800000001,"lon":29.44938666666667,"nitelik":"Tarla"}]},"Kocaarmut":{"area":9327,"parcel_count":5,"lat":36.863198625,"lon":29.436975160714287,"parcels":[{"no":"266/95","owner":"Songül","field":"moda","alan":"2.065,68","lat":36.861518571428576,"lon":29.434834285714288,"nitelik":"Tarla"},{"no":"266/64","owner":"Tuğba","field":"eczacı","alan":"1.265,23","lat":36.86080642857143,"lon":29.437026428571425,"nitelik":"Tarla"},{"no":"266/5","owner":"Songül","field":"moda","alan":"1.866,79","lat":36.866179375,"lon":29.440404375,"nitelik":"Tarla"},{"no":"266/42","owner":"Mert","field":"medya","alan":"2.490,97","lat":36.86249875,"lon":29.436894999999993,"nitelik":"Tarla"},{"no":"267/39","owner":"Ebru","field":"yatırımcı","alan":"1.638,69","lat":36.86499,"lon":29.435715714285717,"nitelik":"Tarla"}]},"Kocaelma":{"area":1978,"parcel_count":2,"lat":36.851191166666666,"lon":29.460695916666666,"parcels":[{"no":"303/6","owner":"Şafak","field":"müzik, prodüksiyon","alan":"1.024,80","lat":36.851175,"lon":29.4608125,"nitelik":"Tarla"},{"no":"303/4","owner":"Aşkın","field":"","alan":"953,66","lat":36.851207333333335,"lon":29.460579333333335,"nitelik":"Tarla"}]},"Kovalı":{"area":1920,"parcel_count":7,"lat":36.86158177911375,"lon":29.448903908841157,"parcels":[{"no":"242/45","owner":"Şenay","field":"eğitim/öğretmen","alan":"353,26","lat":36.8610423076923,"lon":29.44862538461538,"nitelik":"Tarla"},{"no":"242/11","owner":"Cansu","field":"moda","alan":"150,77","lat":36.862255714285716,"lon":29.449270000000002,"nitelik":"Tarla"},{"no":"242/47","owner":"Yurdanur","field":"esnaf","alan":"359,99","lat":36.861152727272724,"lon":29.448517272727273,"nitelik":"Tarla"},{"no":"242/39","owner":"Yurdanur","field":"esnaf","alan":"201,53","lat":36.86133125,"lon":29.44911125,"nitelik":"Tarla"},{"no":"242/24","owner":"Metecan","field":"şef","alan":"357,40","lat":36.861791000000004,"lon":29.449136,"nitelik":"Tarla"},{"no":"242/52","owner":"Metecan","field":"şef","alan":"236,55","lat":36.861495454545455,"lon":29.448725454545457,"nitelik":"Tarla"},{"no":"242/66","owner":"Açelya","field":"","alan":"260,41","lat":36.862004,"lon":29.448942,"nitelik":"Tarla"}]},"Koyunkıralanı":{"area":16175,"parcel_count":11,"lat":36.862309282790314,"lon":29.432596571173107,"parcels":[{"no":"271/50","owner":"Seda","field":"tıp hemşire","alan":"1.360,86","lat":36.862966666666665,"lon":29.43069444444445,"nitelik":"Tarla"},{"no":"271/51","owner":"Dilek -","field":"","alan":"4.921,80","lat":36.86228523809524,"lon":29.43046380952381,"nitelik":"Tarla"},{"no":"271/71","owner":"Doğa","field":"model","alan":"1.404,74","lat":36.86162666666666,"lon":29.434095000000003,"nitelik":"Tarla"},{"no":"271/57","owner":"Ayşe","field":"yatırımcı","alan":"1.181,64","lat":36.86172157894737,"lon":29.43220789473684,"nitelik":"Tarla"},{"no":"271/64","owner":"Ayşen","field":"yatırımcı","alan":"251,74","lat":36.86157571428571,"lon":29.432350000000003,"nitelik":"Tarla"},{"no":"271/67","owner":"Ayşen","field":"yatırımcı","alan":"121,44","lat":36.86192714285715,"lon":29.43241714285714,"nitelik":"Tarla"},{"no":"271/68","owner":"Ayşen","field":"yatırımcı","alan":"1.874,07","lat":36.861920500000004,"lon":29.432722999999992,"nitelik":"Tarla"},{"no":"270/2","owner":"Fatih","field":"reklam","alan":"1.729,14","lat":36.86193,"lon":29.434198181818182,"nitelik":"Tarla"},{"no":"269/20","owner":"Seçil","field":"yatırımcı","alan":"841,16","lat":36.862619,"lon":29.433578999999998,"nitelik":"Tarla"},{"no":"269/8","owner":"Ahmet","field":"yatırımcı","alan":"1.395,59","lat":36.86331071428572,"lon":29.434077142857145,"nitelik":"Tarla"},{"no":"271/2","owner":"Mert","field":"medya","alan":"1.092,80","lat":36.86351888888889,"lon":29.431756666666665,"nitelik":"Tarla"}]},"Kumluçukur":{"area":40070,"parcel_count":21,"lat":36.85251869292112,"lon":29.443630322375558,"parcels":[{"no":"255/55","owner":"Fatih","field":"reklam","alan":"1.439,16","lat":36.85288461538462,"lon":29.442837692307698,"nitelik":"Tarla"},{"no":"255/52","owner":"Müge","field":"Yatırımcı","alan":"2.153,09","lat":36.852438125,"lon":29.442356874999998,"nitelik":"Tarla"},{"no":"255/5","owner":"Ozan","field":"tasarımcı","alan":"2.111,86","lat":36.85270857142858,"lon":29.443244285714286,"nitelik":"Tarla"},{"no":"255/26","owner":"Servet","field":"güzellik sektörü","alan":"1.045,82","lat":36.852054545454536,"lon":29.444905454545452,"nitelik":"Tarla"},{"no":"255/33","owner":"Servet","field":"güzellik sektörü","alan":"51,30","lat":36.852351999999996,"lon":29.44409,"nitelik":"Tarla"},{"no":"255/23","owner":"Kıvanç","field":"zeytincilik","alan":"3.838,12","lat":36.852108888888885,"lon":29.445502222222224,"nitelik":"Tarla"},{"no":"255/58","owner":"Kıvanç","field":"zeytincilik","alan":"983,13","lat":36.85308333333334,"lon":29.44196866666667,"nitelik":"Tarla"},{"no":"255/54","owner":"Servet","field":"güzellik sektörü","alan":"178,84","lat":36.8526825,"lon":29.4429,"nitelik":"Tarla"},{"no":"255/4","owner":"Kıvanç","field":"zeytincilik","alan":"2.271,96","lat":36.853135263157895,"lon":29.442439999999998,"nitelik":"Tarla"},{"no":"255/14","owner":"Berna","field":"yoga & wellness","alan":"1.784,07","lat":36.85347,"lon":29.444569285714287,"nitelik":"Tarla"},{"no":"255/28","owner":"Emre","field":"inşaat","alan":"2.739,17","lat":36.85178416666667,"lon":29.444060833333335,"nitelik":"Tarla"},{"no":"255/39","owner":"Berna","field":"yoga & wellness","alan":"964,70","lat":36.85211384615384,"lon":29.443252307692312,"nitelik":"Tarla"},{"no":"255/15","owner":"Begüm&Nuri","field":"turizm & dağcılık","alan":"3.418,47","lat":36.85365941176471,"lon":29.444826470588236,"nitelik":"Tarla"},{"no":"255/47","owner":"Begüm&Nuri","field":"turizm & dağcılık","alan":"5.050,85","lat":36.85137783783784,"lon":29.44296243243243,"nitelik":"Tarla"},{"no":"255/43","owner":"Burak","field":"reklam & oyun","alan":"4.582,94","lat":36.85103192307692,"lon":29.443698461538457,"nitelik":"Tarla"},{"no":"255/19","owner":"Burak","field":"reklam & oyun","alan":"1.810,76","lat":36.85322818181818,"lon":29.445014545454544,"nitelik":"Tarla"},{"no":"255/60","owner":"Gizem","field":"berlin organizasyon","alan":"913,44","lat":36.85301888888889,"lon":29.441321111111115,"nitelik":"Tarla"},{"no":"255/41","owner":"Zeynep","field":"yoga & wellness","alan":"859,60","lat":36.85164692307693,"lon":29.44338384615385,"nitelik":"Tarla"},{"no":"255/17","owner":"Sevdiye","field":"","alan":"1.122,95","lat":36.85377999999999,"lon":29.44543375,"nitelik":"Tarla"},{"no":"255/24","owner":"Sevdiye","field":"","alan":"895,03","lat":36.85176,"lon":29.445535000000003,"nitelik":"Tarla"},{"no":"255/56","owner":"Sevdiye","field":"","alan":"1.854,80","lat":36.85257352941177,"lon":29.441933529411763,"nitelik":"Tarla"}]},"Kuyuönü":{"area":16512,"parcel_count":9,"lat":36.88542306818182,"lon":29.487516561512564,"parcels":[{"no":"148/65","owner":"Aynur","field":"tıp hemşire","alan":"117,46","lat":36.88353,"lon":29.487132000000003,"nitelik":"Tarla"},{"no":"148/1","owner":"Diren","field":"yatırımcı","alan":"853,28","lat":36.89162846153847,"lon":29.48711000000001,"nitelik":"Tarla"},{"no":"149/1","owner":"Aynur","field":"tıp hemşire","alan":"2.006,07","lat":36.891476363636365,"lon":29.486914545454542,"nitelik":"Tarla"},{"no":"149/32","owner":"Aynur","field":"hemşire","alan":"929,49","lat":36.8835475,"lon":29.486577500000006,"nitelik":"Tarla"},{"no":"148/24","owner":"Tolga","field":"yatırımcı","alan":"2.707,63","lat":36.890345,"lon":29.490314,"nitelik":"Tarla"},{"no":"149/55","owner":"Tuba","field":"Oyuncu","alan":"2.498,91","lat":36.88008153846154,"lon":29.48647153846154,"nitelik":"Tarla"},{"no":"152/12","owner":"Şengül","field":"","alan":"1.075,70","lat":36.877132499999995,"lon":29.48560333333333,"nitelik":"Tarla"},{"no":"148/20","owner":"Aşkın","field":"","alan":"3.875,60","lat":36.891046249999995,"lon":29.4907125,"nitelik":"Tarla"},{"no":"150/5","owner":"Tuba","field":"Oyuncu","alan":"2.448,34","lat":36.880019999999995,"lon":29.48681363636364,"nitelik":"Tarla"}]},"Körmenli":{"area":954,"parcel_count":1,"lat":36.87139500000001,"lon":29.437695,"parcels":[{"no":"262/5","owner":"Aşkın","field":"","alan":"954,04","lat":36.87139500000001,"lon":29.437695,"nitelik":"Tarla"}]},"Köyiçi":{"area":1470,"parcel_count":3,"lat":36.880552083333335,"lon":29.42598291666667,"parcels":[{"no":"213/21","owner":"Servet","field":"","alan":"452,49","lat":36.8756875,"lon":29.4288775,"nitelik":"Tarla"},{"no":"190/17","owner":"Servet","field":"","alan":"219,62","lat":36.883857500000005,"lon":29.425730000000005,"nitelik":"Taş Ev Ve Arsası"},{"no":"193/1","owner":"Nilgün","field":"öğretmen","alan":"797,73","lat":36.882111249999994,"lon":29.42334125,"nitelik":"Tarla"}]},"Kısraköleni":{"area":11122,"parcel_count":5,"lat":36.84962373535354,"lon":29.447450177777785,"parcels":[{"no":"254/14","owner":"Bora","field":"mimar müteahhit","alan":"2.162,28","lat":36.849025454545455,"lon":29.447360000000003,"nitelik":"Tarla"},{"no":"254/12","owner":"Ozan","field":"tasarımcı","alan":"1.374,64","lat":36.849311111111106,"lon":29.446966666666672,"nitelik":"Tarla"},{"no":"254/10","owner":"Aşkın","field":"","alan":"3.654,79","lat":36.849454666666674,"lon":29.447836000000006,"nitelik":"Tarla"},{"no":"254/15","owner":"Aşkın","field":"","alan":"1.169,14","lat":36.848954444444445,"lon":29.44767222222222,"nitelik":"Tarla"},{"no":"254/1","owner":"Aşkın","field":"","alan":"2.760,80","lat":36.851373,"lon":29.447416000000004,"nitelik":"Tarla"}]},"Kızıl Yuvalar":{"area":18111,"parcel_count":9,"lat":36.902917391870204,"lon":29.443574337977296,"parcels":[{"no":"119/12","owner":"Emine","field":"yatırımcı","alan":"1.472,46","lat":36.90319066666667,"lon":29.442568666666663,"nitelik":"Tarla"},{"no":"117/12","owner":"Sanem","field":"doktor","alan":"1.513,63","lat":36.90499533333334,"lon":29.443362666666662,"nitelik":"Tarla"},{"no":"120/8","owner":"Ayşe Ankara","field":"diş hekimi","alan":"536,02","lat":36.903075,"lon":29.445163,"nitelik":"Tarla"},{"no":"122/20","owner":"İlke&İrem","field":"eğitim","alan":"6.016,96","lat":36.89935210526316,"lon":29.44497789473684,"nitelik":"Tarla"},{"no":"117/7","owner":"Ateş arkadaş","field":"Deniz","alan":"701,09","lat":36.905635000000004,"lon":29.443211,"nitelik":"Tarla"},{"no":"119/14","owner":"Esin","field":"müteahhit","alan":"2.213,68","lat":36.90273352941177,"lon":29.44290176470589,"nitelik":"Tarla"},{"no":"120/1","owner":"Ateş","field":"spor, turizm","alan":"1.867,78","lat":36.90258705882353,"lon":29.44317588235294,"nitelik":"Tarla"},{"no":"120/2","owner":"Murat","field":"kahve sektörü","alan":"1.721,92","lat":36.902355833333324,"lon":29.443250833333327,"nitelik":"Tarla"},{"no":"120/3","owner":"Arzu","field":"yatırımcı","alan":"2.067,79","lat":36.90233200000001,"lon":29.44355733333333,"nitelik":"Tarla"}]},"Memişoğlu":{"area":2995,"parcel_count":4,"lat":36.895733712953714,"lon":29.44502114801865,"parcels":[{"no":"124/1","owner":"Sanem","field":"doktor","alan":"285,65","lat":36.895453333333336,"lon":29.444833333333335,"nitelik":"Tarla"},{"no":"125/7","owner":"Sanem","field":"doktor","alan":"1.348,39","lat":36.89444307692308,"lon":29.444783076923077,"nitelik":"Tarla"},{"no":"123/2","owner":"Tuğba&Olga","field":"sinema","alan":"497,36","lat":36.896435714285715,"lon":29.44536,"nitelik":"Tarla"},{"no":"123/1","owner":"Tuğba&Olga","field":"sinema","alan":"863,72","lat":36.89660272727272,"lon":29.445108181818185,"nitelik":"Tarla"}]},"Orta Tarla":{"area":441,"parcel_count":1,"lat":36.89297111111111,"lon":29.425718888888884,"parcels":[{"no":"172/13","owner":"Ayşe","field":"organizasyon","alan":"441,03","lat":36.89297111111111,"lon":29.425718888888884,"nitelik":"Tarla"}]},"Oysal":{"area":5879,"parcel_count":4,"lat":36.891212052669545,"lon":29.48378688838939,"parcels":[{"no":"156/2","owner":"Elif","field":"girişimci","alan":"1.122,14","lat":36.89031444444444,"lon":29.484785555555554,"nitelik":"Tarla"},{"no":"157/8","owner":"Göktan","field":"müzisyen","alan":"2.576,83","lat":36.891349999999996,"lon":29.48471615384615,"nitelik":"Tarla"},{"no":"157/4","owner":"Şafak","field":"müzik, prodüksiyon","alan":"1.856,81","lat":36.892300909090906,"lon":29.483347272727272,"nitelik":"Tarla"},{"no":"158/3","owner":"Cihan","field":"dişçi","alan":"323,22","lat":36.890882857142856,"lon":29.48229857142857,"nitelik":"Tarla"}]},"Palamutlu":{"area":14808,"parcel_count":3,"lat":36.85299603174604,"lon":29.45370708994709,"parcels":[{"no":"252/11","owner":"Bora","field":"mimar müteahhit","alan":"4.107,52","lat":36.853121428571434,"lon":29.453324999999996,"nitelik":"Tarla"},{"no":"252/10","owner":"Bora","field":"mimar müteahhit","alan":"2.713,56","lat":36.85286333333333,"lon":29.45338238095239,"nitelik":"Tarla"},{"no":"252/2","owner":"Bora","field":"mimar müteahhit","alan":"7.987,21","lat":36.85300333333333,"lon":29.454413888888894,"nitelik":"Tarla"}]},"Söben":{"area":3279,"parcel_count":7,"lat":36.86606330078849,"lon":29.452157147186146,"parcels":[{"no":"245/19","owner":"Ayla","field":"sanat sinema","alan":"275,01","lat":36.86572090909091,"lon":29.451866363636363,"nitelik":"Tarla"},{"no":"245/51","owner":"Yakut","field":"sanat/sinema","alan":"490,54","lat":36.86653214285714,"lon":29.452782857142857,"nitelik":"Tarla"},{"no":"244/11","owner":"Alp","field":"müzik","alan":"488,87","lat":36.86712333333333,"lon":29.452353333333335,"nitelik":"Tarla"},{"no":"245/28","owner":"Ortak Parsel  (Sarnıç)","field":"","alan":"406,71","lat":36.866025625000006,"lon":29.452289999999994,"nitelik":"Tarla"},{"no":"245/46","owner":"Tuğba","field":"Sinema/sanat","alan":"347,78","lat":36.866364999999995,"lon":29.452581,"nitelik":"Tarla"},{"no":"245/7","owner":"Seda","field":"Tıp/hemşire","alan":"990,35","lat":36.864754666666656,"lon":29.45171933333334,"nitelik":"Tarla"},{"no":"243/1","owner":"Turgay","field":"sanat/sinema","alan":"279,76","lat":36.865921428571426,"lon":29.451507142857142,"nitelik":"Tarla"}]},"Taşönü":{"area":8262,"parcel_count":4,"lat":36.86766092256493,"lon":29.447592144967533,"parcels":[{"no":"235/11","owner":"Doğan","field":"yatırımcı","alan":"5.982,82","lat":36.868245200000004,"lon":29.446547200000005,"nitelik":"Tarla"},{"no":"238/3","owner":"Sezgin","field":"kaptan","alan":"680,52","lat":36.86767428571428,"lon":29.448082857142857,"nitelik":"Tarla"},{"no":"237/3","owner":"İlayda","field":"medya, organizasyon","alan":"969,13","lat":36.86718545454546,"lon":29.447987272727275,"nitelik":"Tarla"},{"no":"237/1","owner":"Süleyman","field":"media artist","alan":"629,18","lat":36.86753875,"lon":29.447751249999996,"nitelik":"Tarla"}]},"Yenice":{"area":20182,"parcel_count":8,"lat":36.89838550108226,"lon":29.48883489213564,"parcels":[{"no":"145/1","owner":"Ecem","field":"digital artist","alan":"4.855,49","lat":36.895955,"lon":29.48751642857143,"nitelik":"Tarla"},{"no":"142/2","owner":"Ayhan","field":"müteahhit","alan":"9.182,56","lat":36.902460555555564,"lon":29.489644999999996,"nitelik":"Tarla"},{"no":"144/1","owner":"Ayla","field":"sinema","alan":"831,82","lat":36.89719777777779,"lon":29.488086111111116,"nitelik":"Tarla"},{"no":"330/1","owner":"Ayla","field":"sinema","alan":"325,93","lat":36.89656,"lon":29.488574999999997,"nitelik":"Tarla"},{"no":"144/5","owner":"Ayla","field":"sinema","alan":"266,29","lat":36.89683142857143,"lon":29.48862857142857,"nitelik":"Tarla"},{"no":"329/1","owner":"Gürkan","field":"diş hekimi","alan":"821,89","lat":36.89732600000001,"lon":29.488024000000003,"nitelik":"Tarla"},{"no":"143/6","owner":"Kemal","field":"inşaat","alan":"3.074,84","lat":36.90026181818181,"lon":29.490575454545457,"nitelik":"Tarla"},{"no":"143/3","owner":"Ebru","field":"yatırımcı","alan":"823,49","lat":36.900491428571435,"lon":29.48962857142857,"nitelik":"Tarla"}]},"Yukarı Acımık":{"area":7914,"parcel_count":5,"lat":36.88856858368298,"lon":29.474223931934734,"parcels":[{"no":"164/37","owner":"İrem","field":"Gelişim koleji","alan":"1.657,52","lat":36.886893,"lon":29.474936000000003,"nitelik":"Tarla"},{"no":"164/26","owner":"İrem","field":"Gelişim koleji","alan":"903,30","lat":36.88842692307692,"lon":29.474608461538462,"nitelik":"Tarla"},{"no":"164/39","owner":"Hıdır Yücel","field":"yazılımcı","alan":"1.070,81","lat":36.88636166666667,"lon":29.47455666666667,"nitelik":"Tarla"},{"no":"164/12","owner":"Tekin","field":"Ekipler amiri","alan":"1.151,34","lat":36.89007769230769,"lon":29.473753076923074,"nitelik":"Tarla"},{"no":"164/1","owner":"Can","field":"Prodüksiyon","alan":"3.131,45","lat":36.89108363636364,"lon":29.47326545454546,"nitelik":"Tarla"}]},"Yukarı Eriçek":{"area":9277,"parcel_count":5,"lat":36.857169004329,"lon":29.47156333621934,"parcels":[{"no":"310/12","owner":"Meral","field":"yatırımcı","alan":"1.668,77","lat":36.856883333333336,"lon":29.47055888888889,"nitelik":"Tarla"},{"no":"310/7","owner":"Tekin","field":"organizasyon","alan":"947,78","lat":36.856014285714295,"lon":29.47227285714286,"nitelik":"Tarla"},{"no":"310/4","owner":"Engin","field":"mobilya","alan":"1.286,13","lat":36.85669090909091,"lon":29.471152727272734,"nitelik":"Tarla"},{"no":"309/5","owner":"Mert","field":"ilaç sektörü","alan":"1.917,86","lat":36.85908285714286,"lon":29.47186857142857,"nitelik":"Tarla"},{"no":"310/2","owner":"Ali","field":"","alan":"3.456,06","lat":36.85717363636364,"lon":29.471963636363636,"nitelik":"Tarla"}]},"Zabır":{"area":8585,"parcel_count":5,"lat":36.89536741666667,"lon":29.48067356904762,"parcels":[{"no":"138/56","owner":"Barış","field":"oyun sektörü","alan":"1.713,77","lat":36.89503,"lon":29.47966266666667,"nitelik":"Tarla"},{"no":"138/68","owner":"Cemre","field":"yoga & wellness","alan":"601,00","lat":36.894268571428576,"lon":29.47969,"nitelik":"Tarla"},{"no":"138/71","owner":"Emile","field":"oyun sektörü","alan":"605,79","lat":36.89380375,"lon":29.480003749999998,"nitelik":"Tarla"},{"no":"138/73","owner":"Emile","field":"oyun sektörü","alan":"679,04","lat":36.893699999999995,"lon":29.479793333333337,"nitelik":"Tarla"},{"no":"138/8","owner":"Barış","field":"oyun sektörü","alan":"4.985,87","lat":36.90003476190476,"lon":29.48421809523809,"nitelik":"Tarla"}]},"Çamlıçukur":{"area":20120,"parcel_count":16,"lat":36.863077087752075,"lon":29.445005162929917,"parcels":[{"no":"239/29","owner":"Fahriye","field":"Mali müşavir","alan":"497,28","lat":36.862397,"lon":29.444757999999997,"nitelik":"Tarla"},{"no":"240/5","owner":"Aynur","field":"Tıp","alan":"2.362,72","lat":36.862225,"lon":29.443921111111113,"nitelik":"Tarla"},{"no":"239/25","owner":"Pelin","field":"Prodüksiyon","alan":"864,95","lat":36.863885833333335,"lon":29.443883333333332,"nitelik":"Tarla"},{"no":"239/31","owner":"Fahriye","field":"Mali müşavir","alan":"1.315,87","lat":36.86217565217392,"lon":29.44458130434783,"nitelik":"Tarla"},{"no":"240/11","owner":"Tuğçe","field":"Yoga & wellness, turizm","alan":"1.020,20","lat":36.862047000000004,"lon":29.443701999999995,"nitelik":"Tarla"},{"no":"239/34","owner":"Elif","field":"Güzellik sektörü","alan":"2.466,97","lat":36.86109538461538,"lon":29.445461538461537,"nitelik":"Tarla"},{"no":"239/26","owner":"Berk","field":"Prodüksiyon","alan":"1.224,06","lat":36.863331111111115,"lon":29.44426222222222,"nitelik":"Tarla"},{"no":"239/21","owner":"Esin","field":"Müteahhit","alan":"1.148,10","lat":36.86214416666667,"lon":29.445384166666667,"nitelik":"Tarla"},{"no":"240/7","owner":"Tuğba","field":"sinema","alan":"1.175,28","lat":36.86156833333333,"lon":29.44429666666667,"nitelik":"Tarla"},{"no":"239/13","owner":"Aşkın","field":"Restaurant","alan":"1.222,80","lat":36.86316000000001,"lon":29.445989000000004,"nitelik":"Tarla"},{"no":"239/12","owner":"Tekin","field":"Organizasyon","alan":"668,15","lat":36.8636075,"lon":29.44578875,"nitelik":"Tarla"},{"no":"239/3","owner":"Pilates Eğitmeni","field":"","alan":"1.251,95","lat":36.864447857142856,"lon":29.44669214285715,"nitelik":"Tarla"},{"no":"239/7","owner":"Aylin","field":"EU proje manager","alan":"2.217,77","lat":36.86499545454546,"lon":29.445645454545456,"nitelik":"Ham Toprak"},{"no":"240/2","owner":"Aşkın","field":"Restaurant","alan":"501,58","lat":36.862797,"lon":29.444258999999995,"nitelik":"Tarla"},{"no":"239/5","owner":"Tekin","field":"Organizasyon","alan":"444,00","lat":36.864345,"lon":29.446121250000004,"nitelik":"Tarla"},{"no":"239/8","owner":"Aşkın","field":"Restaurant","alan":"1.738,38","lat":36.865011111111116,"lon":29.44533666666667,"nitelik":"Tarla"}]},"Çukurkavak":{"area":4995,"parcel_count":4,"lat":36.85425092810458,"lon":29.460282560457514,"parcels":[{"no":"294/13","owner":"- Sinan","field":"İnşaat","alan":"619,38","lat":36.85442888888889,"lon":29.459838888888882,"nitelik":"Tarla"},{"no":"294/18","owner":"Müslüm","field":"Tekstil","alan":"2.655,13","lat":36.85309099999999,"lon":29.459414000000002,"nitelik":"Taş Ev Ve Tarlası"},{"no":"298/3","owner":"Aşkın","field":"F&B","alan":"197,73","lat":36.854815,"lon":29.461045,"nitelik":"Tarla"},{"no":"299/8","owner":"Aşkın","field":"","alan":"1.523,11","lat":36.85466882352941,"lon":29.46083235294117,"nitelik":"Tarla"}]}};
+
+// Initialize map
+const center = [36.872, 29.452];
+const map = L.map('map', {
+  zoomControl: true,
+  preferCanvas: true
+}).setView(center, 13);
+
+// Two base layers
+const darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap · © CARTO',
+  subdomains: 'abcd',
+  maxZoom: 19
+});
+const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: '© Esri · World Imagery',
+  maxZoom: 19
+});
+darkLayer.addTo(map);
+
+document.getElementById('t-dark').onclick = () => {
+  map.removeLayer(satLayer); darkLayer.addTo(map);
+  document.getElementById('t-dark').classList.add('active');
+  document.getElementById('t-sat').classList.remove('active');
+};
+document.getElementById('t-sat').onclick = () => {
+  map.removeLayer(darkLayer); satLayer.addTo(map);
+  document.getElementById('t-sat').classList.add('active');
+  document.getElementById('t-dark').classList.remove('active');
+};
+
+// Layer groups
+const mevkiCircles = L.layerGroup().addTo(map);
+const parcelDots = L.layerGroup();
+const parcelMarkers = {};
+
+// Build mevki circles
+const circles = {};
+Object.entries(DATA).forEach(([name, m]) => {
+  const radius = Math.max(60, Math.sqrt(m.area) * 1.5);
+  const circle = L.circle([m.lat, m.lon], {
+    radius: radius,
+    color: '#c89a3e',
+    weight: 1.5,
+    opacity: 0.85,
+    fillColor: '#c89a3e',
+    fillOpacity: 0.15
+  }).addTo(mevkiCircles);
+  circle.bindTooltip(name, { permanent: false, direction: 'top', offset: [0, -10] });
+  circle.on('click', () => showDetail(name));
+  circle.on('mouseover', function() { this.setStyle({ fillOpacity: 0.35, weight: 2.5 }); });
+  circle.on('mouseout',  function() { this.setStyle({ fillOpacity: 0.15, weight: 1.5 }); });
+  circles[name] = circle;
+});
+
+// Build individual parcel markers (hidden until mevki is selected)
+function showParcelMarkers(mevkiName) {
+  parcelDots.clearLayers();
+  parcelMarkers[mevkiName] = [];
+  const m = DATA[mevkiName];
+  m.parcels.forEach(p => {
+    const marker = L.circleMarker([p.lat, p.lon], {
+      radius: 7,
+      color: '#e8c878',
+      weight: 1.5,
+      fillColor: '#c89a3e',
+      fillOpacity: 0.8
+    }).addTo(parcelDots);
+    marker.bindTooltip(p.no + ' · ' + (p.owner || '—'),
+      { direction: 'top', offset: [0, -8], opacity: 0.95 });
+    marker.bindPopup(
+      '<div class="pop-name">' + p.no + '</div>' +
+      '<div class="pop-owner">' + (p.owner || '—') + (p.field ? ' · <em style="color:#e8c878;">' + p.field + '</em>' : '') + '</div>' +
+      '<div class="pop-area">' + p.alan + ' m² · ' + p.nitelik + '</div>'
+    );
+    parcelMarkers[mevkiName].push(marker);
+  });
+  map.addLayer(parcelDots);
+}
+function hideParcelMarkers() {
+  parcelDots.clearLayers();
+  map.removeLayer(parcelDots);
+}
+
+// Build list in side panel (sorted by area)
+const mlist = document.getElementById('mlist');
+const sortedMevkis = Object.entries(DATA).sort((a,b) => b[1].area - a[1].area);
+sortedMevkis.forEach(([name, m]) => {
+  const li = document.createElement('li');
+  li.innerHTML =
+    '<span class="mname">' + name + '</span>' +
+    '<span class="marea">' + (m.area/1000).toFixed(2) + ' d.</span>' +
+    '<span class="mcount">' + m.parcels.length + '</span>';
+  li.onclick = () => showDetail(name);
+  mlist.appendChild(li);
+});
+
+// Show detail view for one mevki
+function showDetail(name) {
+  const m = DATA[name];
+  document.getElementById('list-view').style.display = 'none';
+  document.getElementById('detail-view').style.display = 'block';
+  document.getElementById('d-name').textContent = name;
+  document.getElementById('d-meta').textContent = 'Ballık · Altınyayla · Burdur';
+  document.getElementById('d-area').textContent = m.area.toLocaleString('tr-TR');
+  document.getElementById('d-count').textContent = m.parcels.length;
+
+  const ul = document.getElementById('d-parcels');
+  ul.innerHTML = '';
+  m.parcels.forEach((p, i) => {
+    const li = document.createElement('li');
+    li.innerHTML =
+      '<span class="pno">' + p.no + '</span>' +
+      '<div class="pinfo">' +
+        '<div class="owner">' + (p.owner || '—') + '</div>' +
+        (p.field ? '<div class="field">' + p.field + '</div>' : '') +
+      '</div>' +
+      '<span class="pmarea">' + p.alan + ' m²</span>';
+    li.onclick = () => {
+      map.flyTo([p.lat, p.lon], 18, { duration: 0.7 });
+      const marker = parcelMarkers[name] && parcelMarkers[name][i];
+      if (marker) setTimeout(() => marker.openPopup(), 700);
+    };
+    ul.appendChild(li);
+  });
+
+  showParcelMarkers(name);
+  // Fit to mevki bounds
+  const lats = m.parcels.map(p => p.lat), lons = m.parcels.map(p => p.lon);
+  const bounds = L.latLngBounds(
+    [Math.min(...lats), Math.min(...lons)],
+    [Math.max(...lats), Math.max(...lons)]
+  );
+  map.flyToBounds(bounds, { padding: [80, 80], duration: 0.9, maxZoom: 17 });
+}
+
+function showList() {
+  document.getElementById('list-view').style.display = 'block';
+  document.getElementById('detail-view').style.display = 'none';
+  hideParcelMarkers();
+  map.flyTo(center, 13, { duration: 0.8 });
+}
+</script>
+
+</body>
+</html>

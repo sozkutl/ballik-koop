@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Ballık · Pazar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #14201a;
+    --forest-deep: #0a100a;
+    --forest-soft: #1f2c1c;
+    --ivory: #faf5e7;
+    --gold: #c89a3e;
+    --gold-pale: #e8c878;
+    --rust: #c75c3e;
+    --sage: #6b8a5a;
+    --stone: #6b6863;
+    --line: rgba(250,245,231,0.12);
+    --line-strong: rgba(250,245,231,0.25);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--forest); color: var(--ivory);
+    font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400; line-height: 1.55; font-size: 15px;
+    letter-spacing: -0.005em; }
+  a { color: inherit; text-decoration: none; }
+  img, svg { display: block; max-width: 100%; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+  em { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    font-weight: 400; color: var(--gold); }
+  .mono { font-family: "JetBrains Mono", monospace; letter-spacing: 0.1em;
+    text-transform: uppercase; font-size: 10px; font-weight: 500; }
+
+  /* SHARED NAV */
+  nav.site { background: var(--forest-deep); color: var(--ivory);
+    padding: 18px 36px; display: flex; align-items: center;
+    justify-content: space-between; gap: 24px;
+    border-bottom: 1px solid var(--line); }
+  nav.site .brand { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 26px; letter-spacing: -0.015em; line-height: 1; }
+  nav.site ul { list-style: none; display: flex; gap: 24px; }
+  nav.site ul a { font-family: "Inter", sans-serif; font-size: 11px;
+    letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500;
+    opacity: 0.8; transition: opacity .2s; }
+  nav.site ul a:hover { opacity: 1; }
+  nav.site ul a.active { opacity: 1; color: var(--gold-pale);
+    border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+  @media (max-width: 900px) {
+    nav.site { padding: 14px 18px; flex-wrap: wrap; gap: 12px; }
+    nav.site ul { gap: 14px; flex-wrap: wrap; }
+  }
+
+  /* HEADER */
+  header.market-head { background: var(--forest-deep);
+    padding: 70px 8vw 56px; border-bottom: 1px solid var(--line); }
+  header.market-head .max { max-width: 1200px; margin: 0 auto; }
+  header.market-head .label { font-family: "Inter", sans-serif; font-weight: 500;
+    font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 16px; }
+  header.market-head h1 { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: clamp(56px, 8vw, 110px); font-weight: 400; line-height: 0.95;
+    letter-spacing: -0.025em; margin-bottom: 20px; }
+  header.market-head h1 em { font-style: italic; color: var(--gold); }
+  header.market-head .sub { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-style: italic; font-size: 22px; line-height: 1.4;
+    max-width: 580px; opacity: 0.85; font-weight: 400; }
+  header.market-head .stats-row { display: flex; gap: 48px; margin-top: 40px;
+    padding-top: 32px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+  header.market-head .stat .v { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 40px; font-weight: 400; letter-spacing: -0.03em; line-height: 1; }
+  header.market-head .stat .v em { color: var(--gold); font-style: italic; }
+  header.market-head .stat .l { font-family: "Inter", sans-serif; font-weight: 500;
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    opacity: 0.65; margin-top: 8px; }
+
+  /* FILTERS */
+  .filters { background: var(--forest); padding: 24px 8vw;
+    border-bottom: 1px solid var(--line); position: sticky;
+    top: 60px; z-index: 50; }
+  .filters .max { max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .filters .chip { padding: 8px 16px; border: 1px solid var(--line);
+    border-radius: 999px; font-size: 12px; cursor: pointer; font-weight: 500;
+    transition: background .2s, border-color .2s, color .2s;
+    white-space: nowrap; letter-spacing: 0.04em; }
+  .filters .chip:hover { background: var(--forest-soft); }
+  .filters .chip.active { background: var(--gold); color: var(--forest-deep);
+    border-color: var(--gold); font-weight: 600; }
+  .filters .sep { flex: 1; }
+  .filters .sort { font-family: "JetBrains Mono", monospace; font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.65; }
+  .filters .sort strong { color: var(--gold); font-weight: 500; }
+
+  /* MAIN */
+  main { padding: 56px 8vw 100px; background: var(--forest); }
+  main .max { max-width: 1200px; margin: 0 auto; }
+
+  /* CATEGORY */
+  .cat { margin-bottom: 70px; }
+  .cat-head { display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 28px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .cat-head h2 { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400;
+    font-size: 36px; letter-spacing: -0.02em; }
+  .cat-head h2 em { font-style: italic; color: var(--gold); }
+  .cat-head .count { font-family: "JetBrains Mono", monospace;
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    opacity: 0.6; }
+
+  /* PRODUCT GRID */
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 28px 20px; }
+  @media (max-width: 1000px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 700px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 450px) { .grid { grid-template-columns: 1fr; } }
+
+  .item { cursor: pointer; }
+  .item .ph { aspect-ratio: 4/5; background: var(--forest-soft);
+    overflow: hidden; margin-bottom: 14px; position: relative;
+    transition: transform .4s cubic-bezier(.22,.61,.36,1); border: 1px solid var(--line); }
+  .item:hover .ph { transform: translateY(-3px); border-color: var(--gold); }
+  .item .ph .ph-text { position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    font-size: 56px; font-weight: 400; letter-spacing: -0.04em;
+    color: var(--ivory); opacity: 0.92; }
+  .item .ph .badge { position: absolute; top: 12px; left: 12px;
+    font-family: "JetBrains Mono", monospace; font-size: 9px;
+    letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500;
+    background: var(--gold); color: var(--forest-deep);
+    padding: 4px 10px; border-radius: 999px; }
+  .item .ph.bal { background: linear-gradient(135deg, var(--gold), var(--rust)); }
+  .item .ph.lav { background: linear-gradient(135deg, #8b7aa8, #5a4a7a); }
+  .item .ph.kek { background: linear-gradient(135deg, var(--sage), #2a4520); }
+  .item .ph.mas { background: linear-gradient(135deg, var(--rust), #5a2010); }
+  .item .ph.saf { background: linear-gradient(135deg, #c97250, #6a3220); }
+  .item .ph.zey { background: linear-gradient(135deg, #4a6b3a, #1a2c10); }
+  .item .ph.tay { background: linear-gradient(135deg, var(--gold-pale), var(--gold)); color: var(--forest-deep); }
+  .item .ph.tay .ph-text { color: var(--forest-deep); }
+  .item .ph.koz { background: linear-gradient(135deg, #5a4a3a, #2a1810); }
+  .item .ph.mim { background: linear-gradient(135deg, var(--forest-soft), var(--forest-deep)); }
+  .item .ph.yog { background: linear-gradient(135deg, #c8b7a8, #6b6863); }
+  .item .ph.kay { background: linear-gradient(135deg, #2a1810, var(--forest-deep)); }
+  .item .ph.tip { background: linear-gradient(135deg, var(--rust), var(--gold)); }
+  .item .ph.rez { background: linear-gradient(135deg, #c97250, #6a3220); }
+  .item .ph.atl { background: linear-gradient(135deg, var(--sage), var(--forest)); }
+  .item .ph.dom { background: linear-gradient(135deg, #b3aea0, var(--stone)); }
+
+  .item .name { font-family: "Inter", sans-serif;
+    font-size: 14px; line-height: 1.4; margin-bottom: 4px;
+    font-weight: 500; color: var(--ivory); }
+  .item .by { font-size: 12px; opacity: 0.65; line-height: 1.4; }
+  .item .meta { display: flex; justify-content: space-between;
+    align-items: center; margin-top: 10px; }
+  .item .price { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    font-size: 20px; font-weight: 400; color: var(--gold);
+    letter-spacing: -0.01em; }
+  .item .stock { font-family: "JetBrains Mono", monospace; font-size: 9px;
+    letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.55; }
+  .item .stock.low { color: var(--rust); opacity: 1; }
+
+  /* SERVICE LIST */
+  .row-list { background: var(--forest-soft); border: 1px solid var(--line);
+    padding: 0; }
+  .row { display: grid; grid-template-columns: 60px 1.4fr 1fr auto;
+    gap: 24px; align-items: center; padding: 18px 22px;
+    border-bottom: 1px solid var(--line); transition: background .2s; }
+  .row:last-child { border-bottom: 0; }
+  .row:hover { background: var(--forest); cursor: pointer; }
+  .row .ico { width: 44px; height: 44px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic; font-size: 22px;
+    color: var(--ivory); font-weight: 400; }
+  .ico.mim { background: var(--forest-deep); border: 1px solid var(--gold); color: var(--gold); }
+  .ico.tip { background: var(--rust); }
+  .ico.muz { background: var(--forest-deep); border: 1px solid var(--ivory); }
+  .ico.yog { background: var(--stone); }
+  .ico.sef { background: var(--gold); color: var(--forest-deep); }
+  .ico.huk { background: #4a6b7a; }
+  .ico.per { background: var(--sage); }
+  .ico.org { background: #8b7aa8; }
+  .row .body .n { font-family: "Inter", sans-serif;
+    font-size: 15px; font-weight: 500; margin-bottom: 2px; color: var(--ivory); }
+  .row .body .n em { color: var(--gold); }
+  .row .body .b { font-size: 12px; opacity: 0.65; }
+  .row .who { font-size: 12px; opacity: 0.75; }
+  .row .who strong { font-weight: 500; opacity: 1; color: var(--gold-pale); }
+  .row .pr { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    font-size: 20px; font-weight: 400; color: var(--gold);
+    letter-spacing: -0.01em; white-space: nowrap; text-align: right; }
+  .row .pr .unit { display: block; font-family: "Inter", sans-serif;
+    font-size: 9px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+    opacity: 0.55; color: var(--ivory); font-style: normal; margin-top: 2px; }
+  @media (max-width: 700px) {
+    .row { grid-template-columns: 44px 1fr; gap: 14px;
+      padding: 14px 18px; }
+    .row .who, .row .pr { grid-column: 2; }
+    .row .pr { text-align: left; }
+  }
+
+  /* FEATURED */
+  .featured { background: var(--gold); color: var(--forest-deep);
+    padding: 36px 36px; margin-bottom: 56px;
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px;
+    align-items: center; }
+  .featured h3 { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400;
+    font-size: 38px; letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 12px; }
+  .featured h3 em { color: var(--forest); font-style: italic; }
+  .featured p { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    font-size: 17px; line-height: 1.5; margin-bottom: 16px; max-width: 480px;
+    color: var(--forest-deep); opacity: 0.85; }
+  .featured .btn { display: inline-block; padding: 14px 26px;
+    background: var(--forest-deep); color: var(--gold-pale);
+    font-family: "Inter", sans-serif; font-size: 10px; font-weight: 600;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    border-radius: 0; transition: background .2s; }
+  .featured .btn:hover { background: var(--forest); }
+  .featured .right { text-align: right; }
+  .featured .big-stat { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400;
+    font-size: 80px; letter-spacing: -0.03em; line-height: 1;
+    color: var(--forest-deep); font-style: italic; }
+  .featured .big-stat-l { font-family: "Inter", sans-serif; font-weight: 500;
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    opacity: 0.7; margin-top: 10px; }
+  @media (max-width: 800px) {
+    .featured { grid-template-columns: 1fr; padding: 28px 24px; }
+    .featured .right { text-align: left; }
+  }
+
+  /* FOOTER */
+  footer { background: var(--forest-deep); color: var(--ivory);
+    padding: 50px 8vw 32px; border-top: 1px solid var(--line); }
+  footer .max { max-width: 1200px; margin: 0 auto; }
+  footer .row-f { display: flex; justify-content: space-between;
+    flex-wrap: wrap; gap: 24px; font-family: "Inter", sans-serif; font-weight: 500;
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    opacity: 0.6; }
+  footer .brand { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 32px;
+    font-weight: 400; letter-spacing: -0.025em; opacity: 1; margin-bottom: 8px;
+    color: var(--ivory); }
+  footer .brand em { font-style: italic; color: var(--gold); }
+</style>
+</head>
+<body>
+
+<nav class="site">
+  <a href="index.html" class="brand">Ballık</a>
+  <ul>
+    <li><a href="index.html#hikaye">Hikaye</a></li>
+    <li><a href="index.html#komsular">Komşular</a></li>
+    <li><a href="index.html#mimari">Mimari</a></li>
+    <li><a href="index.html#pilotlar">Pilotlar</a></li>
+    <li><a href="ballik_market.html" class="active">Pazar</a></li>
+    <li><a href="ballik_konsept.html">Konsept</a></li>
+    <li><a href="ballik_members.html">Üye Girişi</a></li>
+    <li><a href="index.html#sorgu" style="color: var(--gold-pale); border-bottom: 1px solid currentColor; padding-bottom: 2px; opacity: 1; font-weight: 600;">Sorgu</a></li>
+  </ul>
+</nav>
+
+<header class="market-head">
+  <div class="max">
+    <div class="label">Pazar <span style="opacity:0.5;">/</span> <em>üye-üye</em></div>
+    <h1>Köyün <em>iç ekonomisi.</em></h1>
+    <p class="sub">Burası bir e-ticaret değil, bir köy pazarı. Anlam ücretten önce. Üyeler birbirine hediye eder, satar, takas eder. Henüz köy dışına kapalı.</p>
+
+    <div class="stats-row">
+      <div class="stat"><div class="v">142</div><div class="l">Aktif ilan</div></div>
+      <div class="stat"><div class="v"><em>27</em></div><div class="l">Bu hafta yeni</div></div>
+      <div class="stat"><div class="v">68</div><div class="l">Satıcı üye</div></div>
+      <div class="stat"><div class="v">12</div><div class="l">Açık takas</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="filters">
+  <div class="max">
+    <button class="chip active">Tümü</button>
+    <button class="chip">Toprak ürünleri</button>
+    <button class="chip">El işi</button>
+    <button class="chip">Hizmetler</button>
+    <button class="chip">Mekan</button>
+    <button class="chip">Takas</button>
+    <button class="chip">Bağışla</button>
+    <div class="sep"></div>
+    <div class="sort">Sırala: <strong>en yeni</strong></div>
+  </div>
+</div>
+
+<main>
+  <div class="max">
+
+    <div class="featured">
+      <div>
+        <h3>Bu sezonun ilk <em>çiçek balı</em> hasadı geldi.</h3>
+        <p>Tekin'in 255/43 parselindeki sekiz arı kovanından, Kumluçukur'un lavanta - Maşta Sırası - kuşburnu döngüsüyle olgunlaşmış. 12 üye için ayrılan parti, ön sipariş ile dağıtılıyor.</p>
+        <a href="#" class="btn">Önce sıralan</a>
+      </div>
+      <div class="right">
+        <div class="big-stat">12 / 38</div>
+        <div class="big-stat-l">Kalan kavanoz</div>
+      </div>
+    </div>
+
+    <section class="cat">
+      <div class="cat-head">
+        <h2><em>Toprak</em> ürünleri</h2>
+        <div class="count">8 ilan · 4 satıcı</div>
+      </div>
+      <div class="grid">
+        <div class="item">
+          <div class="ph bal"><div class="ph-text">b</div><div class="badge">Yeni</div></div>
+          <div class="name">Çiçek balı, 450g cam kavanoz</div>
+          <div class="by">Aşkın · 8 kovan · Kumluçukur</div>
+          <div class="meta"><div class="price">₺320</div><div class="stock low">Son 12</div></div>
+        </div>
+        <div class="item">
+          <div class="ph lav"><div class="ph-text">l</div></div>
+          <div class="name">Lavanta esans yağı, 10 ml</div>
+          <div class="by">Tekin · 255/43 hasadı</div>
+          <div class="meta"><div class="price">₺180</div><div class="stock">24 stok</div></div>
+        </div>
+        <div class="item">
+          <div class="ph mas"><div class="ph-text">m</div></div>
+          <div class="name">Maşta Sırası, kuru 50g</div>
+          <div class="by">Diren · Kuyuönü</div>
+          <div class="meta"><div class="price">₺140</div><div class="stock low">Son 6</div></div>
+        </div>
+        <div class="item">
+          <div class="ph kek"><div class="ph-text">k</div></div>
+          <div class="name">Yaban kekik, 60g paket</div>
+          <div class="by">Aşkın · doğal toplama</div>
+          <div class="meta"><div class="price">₺95</div><div class="stock">38 stok</div></div>
+        </div>
+        <div class="item">
+          <div class="ph saf"><div class="ph-text">s</div><div class="badge">Sezonluk</div></div>
+          <div class="name">Safran, 1g cam tüp</div>
+          <div class="by">Ayla · sınırlı parti</div>
+          <div class="meta"><div class="price">₺220</div><div class="stock low">Son 4</div></div>
+        </div>
+        <div class="item">
+          <div class="ph zey"><div class="ph-text">z</div></div>
+          <div class="name">Zeytinyağı, 750ml</div>
+          <div class="by">Kıvanç · Kumluçukur 255/58</div>
+          <div class="meta"><div class="price">₺380</div><div class="stock">18 stok</div></div>
+        </div>
+        <div class="item">
+          <div class="ph tay"><div class="ph-text">a</div></div>
+          <div class="name">Altınotu hidrolat, 100ml</div>
+          <div class="by">Berna · Çamlıçukur</div>
+          <div class="meta"><div class="price">₺160</div><div class="stock">22 stok</div></div>
+        </div>
+        <div class="item">
+          <div class="ph kek"><div class="ph-text">t</div></div>
+          <div class="name">Tohum bankası zarfı</div>
+          <div class="by">Köy ortak · 73 tür</div>
+          <div class="meta"><div class="price">Bağışla</div><div class="stock">Üye sınırı 1</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cat">
+      <div class="cat-head">
+        <h2><em>El işi</em> ve plak</h2>
+        <div class="count">6 ilan · 5 satıcı</div>
+      </div>
+      <div class="grid">
+        <div class="item">
+          <div class="ph kay"><div class="ph-text">♪</div><div class="badge">Vinyl</div></div>
+          <div class="name">Oceanvs Orientalis · LP</div>
+          <div class="by">Şafak · Kanto Records · ön sipariş</div>
+          <div class="meta"><div class="price">€38</div><div class="stock">Mayıs sonu</div></div>
+        </div>
+        <div class="item">
+          <div class="ph mim"><div class="ph-text">f</div></div>
+          <div class="name">Ballık manzara baskı, A3</div>
+          <div class="by">Süleyman · numaralı seri</div>
+          <div class="meta"><div class="price">₺780</div><div class="stock">12 / 50</div></div>
+        </div>
+        <div class="item">
+          <div class="ph mim"><div class="ph-text">k</div></div>
+          <div class="name">Kilim, 80x140, doğal boya</div>
+          <div class="by">Yurdanur · Arpacık</div>
+          <div class="meta"><div class="price">₺4.200</div><div class="stock low">1 adet</div></div>
+        </div>
+        <div class="item">
+          <div class="ph tip"><div class="ph-text">t</div></div>
+          <div class="name">Maşta Sırası sticker seti</div>
+          <div class="by">Cihan, Tuğba · 8'li paket</div>
+          <div class="meta"><div class="price">₺85</div><div class="stock">42 stok</div></div>
+        </div>
+        <div class="item">
+          <div class="ph koz"><div class="ph-text">a</div></div>
+          <div class="name">Ahşap kaşık, sedir, el oyma</div>
+          <div class="by">Aras · Kızılyuvalar</div>
+          <div class="meta"><div class="price">₺290</div><div class="stock">9 adet</div></div>
+        </div>
+        <div class="item">
+          <div class="ph saf"><div class="ph-text">t</div></div>
+          <div class="name">El yapımı takı, gümüş</div>
+          <div class="by">Yurdanur · sipariş üzerine</div>
+          <div class="meta"><div class="price">₺1.400+</div><div class="stock">Sipariş</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cat">
+      <div class="cat-head">
+        <h2><em>Hizmetler</em></h2>
+        <div class="count">9 ilan · 9 üye</div>
+      </div>
+      <div class="row-list">
+        <div class="row">
+          <div class="ico mim">m</div>
+          <div class="body">
+            <div class="n">Mimari danışmanlık, saatlik</div>
+            <div class="b">Likya ahşap veya sıkıştırılmış toprak tipoloji uyarlama, sahaya uygun çizim</div>
+          </div>
+          <div class="who"><strong>Buse Atınç</strong> · Bel<br>Mimari, peyzaj</div>
+          <div class="pr">₺800 <span class="unit">saat</span></div>
+        </div>
+        <div class="row">
+          <div class="ico tip">t</div>
+          <div class="body">
+            <div class="n">Aile hekimi randevusu</div>
+            <div class="b">Köy içi muayene + reçete, üyelere ücretsiz, ilaç hariç</div>
+          </div>
+          <div class="who"><strong>Dr. Sanem</strong> · Memişoğlu<br>Tıp, genel</div>
+          <div class="pr">Üyeye ücretsiz <span class="unit">randevu</span></div>
+        </div>
+        <div class="row">
+          <div class="ico yog">y</div>
+          <div class="body">
+            <div class="n">Açık hava yoga, 75 dk</div>
+            <div class="b">Pazar sabahları Çamlıçukur ortak çayırda, mat kendiniz</div>
+          </div>
+          <div class="who"><strong>Berna</strong> · Çamlıçukur<br>Yoga, nefes çalışması</div>
+          <div class="pr">₺200 <span class="unit">seans</span></div>
+        </div>
+        <div class="row">
+          <div class="ico muz">k</div>
+          <div class="body">
+            <div class="n">Kayıt stüdyosu, saatlik</div>
+            <div class="b">Esiri'deki ev stüdyo, analog ve dijital, vokal kabini var</div>
+          </div>
+          <div class="who"><strong>Şafak</strong> · Esiri<br>Müzik prodüksiyon</div>
+          <div class="pr">₺1.200 <span class="unit">saat</span></div>
+        </div>
+        <div class="row">
+          <div class="ico sef">ş</div>
+          <div class="body">
+            <div class="n">Şef akşam yemeği, 6 kişi</div>
+            <div class="b">5 servis, mevsim malzemeleri, sıfır israf, kendi evinizde</div>
+          </div>
+          <div class="who"><strong>Metecan</strong> · Kovalı<br>Gastronomi</div>
+          <div class="pr">₺4.800 <span class="unit">akşam</span></div>
+        </div>
+        <div class="row">
+          <div class="ico huk">a</div>
+          <div class="body">
+            <div class="n">Hukuk danışmanlığı, 30 dk</div>
+            <div class="b">Tapu, sözleşme, miras, telif konularında ilk görüşme</div>
+          </div>
+          <div class="who"><strong>Av. Aylin</strong> · Çamlıçukur<br>Hukuk</div>
+          <div class="pr">₺600 <span class="unit">görüşme</span></div>
+        </div>
+        <div class="row">
+          <div class="ico per">p</div>
+          <div class="body">
+            <div class="n">Permakültür planlama, proje</div>
+            <div class="b">Parselinizin haritasını çıkarır, su yolları, bitki şeması hazırlar</div>
+          </div>
+          <div class="who"><strong>Ayça</strong> · Arpacık 256/59<br>Permakültür</div>
+          <div class="pr">₺7.500 <span class="unit">proje</span></div>
+        </div>
+        <div class="row">
+          <div class="ico org">o</div>
+          <div class="body">
+            <div class="n">Etkinlik organizasyonu</div>
+            <div class="b">Düğün, festival, sanatçı misafir programı planlama</div>
+          </div>
+          <div class="who"><strong>Tekin</strong> · saha amiri<br>Organizasyon</div>
+          <div class="pr">Sor</div>
+        </div>
+        <div class="row">
+          <div class="ico per">d</div>
+          <div class="body">
+            <div class="n">Permakültür gezisi, 2 saat</div>
+            <div class="b">256/59'da sahada gezi, misafirlere açık, üyelere ücretsiz</div>
+          </div>
+          <div class="who"><strong>Ayça</strong> · Arpacık<br>Permakültür</div>
+          <div class="pr">Bağışla <span class="unit">misafir</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cat">
+      <div class="cat-head">
+        <h2><em>Mekan</em> ve konaklama</h2>
+        <div class="count">5 ilan · 4 ev sahibi</div>
+      </div>
+      <div class="grid">
+        <div class="item">
+          <div class="ph rez"><div class="ph-text">e</div></div>
+          <div class="name">Misafirhane, 2 oda</div>
+          <div class="by">Ayşe · Dutderesi · 1-7 gün</div>
+          <div class="meta"><div class="price">₺1.400</div><div class="stock">gece</div></div>
+        </div>
+        <div class="item">
+          <div class="ph atl"><div class="ph-text">s</div></div>
+          <div class="name">Kayıt stüdyosu kiralama</div>
+          <div class="by">Şafak · Esiri · gün ya da hafta</div>
+          <div class="meta"><div class="price">₺3.200</div><div class="stock">gün</div></div>
+        </div>
+        <div class="item">
+          <div class="ph dom"><div class="ph-text">d</div><div class="badge">Yeni</div></div>
+          <div class="name">Samandamı atölye dom</div>
+          <div class="by">Köy ortak · saatlik kiralama</div>
+          <div class="meta"><div class="price">₺250</div><div class="stock">saat</div></div>
+        </div>
+        <div class="item">
+          <div class="ph rez"><div class="ph-text">r</div></div>
+          <div class="name">Sanatçı rezidans odası</div>
+          <div class="by">Köy ortak · 2-4 hafta · başvuru</div>
+          <div class="meta"><div class="price">Burs</div><div class="stock">Aç</div></div>
+        </div>
+        <div class="item">
+          <div class="ph yog"><div class="ph-text">k</div></div>
+          <div class="name">Köy kantini, 12 kişi</div>
+          <div class="by">Aşkın · ortak yemek, kurs için</div>
+          <div class="meta"><div class="price">₺1.800</div><div class="stock">akşam</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cat">
+      <div class="cat-head">
+        <h2><em>Takas</em> ve yardım defteri</h2>
+        <div class="count">12 açık · samimi defter</div>
+      </div>
+      <div class="row-list">
+        <div class="row">
+          <div class="ico sef">/</div>
+          <div class="body">
+            <div class="n">3 saat fotoğraf çekimi <em>karşılığı</em> 1 hafta sebze</div>
+            <div class="b">Önümüzdeki hafta sonu aile portresi, sebze haftalık paket</div>
+          </div>
+          <div class="who"><strong>Tuğba</strong> · Söben<br>Sinema</div>
+          <div class="pr">Takas</div>
+        </div>
+        <div class="row">
+          <div class="ico mim">/</div>
+          <div class="body">
+            <div class="n">2 saat çelik konstrüksiyon yardımı <em>karşılığı</em> ahşap kaşık seti</div>
+            <div class="b">Samandamı dom için iki kişi lazım, hafta sonu</div>
+          </div>
+          <div class="who"><strong>Aras</strong> · Kızılyuvalar<br>Marangoz</div>
+          <div class="pr">Takas</div>
+        </div>
+        <div class="row">
+          <div class="ico tip">/</div>
+          <div class="body">
+            <div class="n">Yoga özel ders 5 seans <em>karşılığı</em> aile hekimi muayene paketi</div>
+            <div class="b">Üye kapsamı dışında, açık takas</div>
+          </div>
+          <div class="who"><strong>Berna, Sanem</strong><br>Çoklu disiplin</div>
+          <div class="pr">Takas</div>
+        </div>
+        <div class="row">
+          <div class="ico per">/</div>
+          <div class="body">
+            <div class="n">Tarla bellemek <em>karşılığı</em> tohum ve öğrenmek</div>
+            <div class="b">Cumartesi sabah Arpacık'ta, kahvaltı dahil</div>
+          </div>
+          <div class="who"><strong>Ayça</strong> · Arpacık<br>Permakültür</div>
+          <div class="pr">Bağışla</div>
+        </div>
+        <div class="row">
+          <div class="ico org">/</div>
+          <div class="body">
+            <div class="n">İstanbul'dan getirilecek küçük paket <em>karşılığı</em> sembolik</div>
+            <div class="b">3 Haziran konsey buluşmasından dönüşte taşıma</div>
+          </div>
+          <div class="who"><strong>İlayda</strong> · Taşönü<br>Medya</div>
+          <div class="pr">Sembolik</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="max">
+    <div class="brand">Ballık <em>· pazar</em></div>
+    <div class="row-f">
+      <div>© 2026 BALLIK · sadece üyelere açık</div>
+      <div>İlk faz · köy dışına kapalı</div>
+      <div>Pazar yönergeleri kütüphanede</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

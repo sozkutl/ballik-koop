@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Ballık · Üye Meydanı</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #14201a;
+    --forest-deep: #0a100a;
+    --forest-soft: #1f2c1c;
+    --ivory: #faf5e7;
+    --gold: #c89a3e;
+    --gold-pale: #e8c878;
+    --rust: #c75c3e;
+    --sage: #6b8a5a;
+    --stone: #6b6863;
+    --line: rgba(250,245,231,0.12);
+    --line-strong: rgba(250,245,231,0.25);
+    --green-dot: #6b8a5a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--forest-deep); color: var(--ivory);
+    font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400; line-height: 1.55; font-size: 15px; letter-spacing: -0.005em; }
+  a { color: inherit; text-decoration: none; }
+  img, svg { display: block; max-width: 100%; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+  em { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    font-weight: 400; color: var(--gold); }
+  .serif { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  .mono { font-family: "JetBrains Mono", monospace; letter-spacing: 0.1em;
+    text-transform: uppercase; font-size: 10px; font-weight: 500; }
+
+  /* TOP NAV (consistent across all pages) */
+  nav.site { background: var(--forest-deep); color: var(--ivory);
+    padding: 18px 36px; display: flex; align-items: center;
+    justify-content: space-between; gap: 24px;
+    border-bottom: 1px solid var(--line); }
+  nav.site .brand { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 26px; letter-spacing: -0.015em; line-height: 1; }
+  nav.site ul { list-style: none; display: flex; gap: 24px; }
+  nav.site ul a { font-family: "Inter", sans-serif; font-size: 11px;
+    letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500;
+    opacity: 0.8; transition: opacity .2s; }
+  nav.site ul a:hover { opacity: 1; }
+  nav.site ul a.active { opacity: 1; color: var(--gold-pale);
+    border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+  @media (max-width: 900px) {
+    nav.site { padding: 14px 18px; flex-wrap: wrap; gap: 12px; }
+    nav.site ul { gap: 14px; flex-wrap: wrap; }
+  }
+
+  /* APP LAYOUT */
+  .app { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 60px); }
+  @media (max-width: 900px) { .app { grid-template-columns: 1fr; } }
+
+  aside.side { background: var(--forest-deep); color: var(--ivory);
+    padding: 28px 24px; border-right: 1px solid var(--line);
+    position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  @media (max-width: 900px) {
+    aside.side { position: relative; height: auto; padding: 18px 22px; }
+  }
+  .panel-label { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    font-size: 24px; letter-spacing: -0.01em; line-height: 1; color: var(--gold); }
+  .panel-sub { font-family: "JetBrains Mono", monospace; font-size: 9px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold-pale); opacity: 0.6; margin-top: 4px; margin-bottom: 32px; display: block; }
+  .nav-section { margin-bottom: 24px; }
+  .nav-section h6 { font-family: "JetBrains Mono", monospace; font-size: 9px;
+    letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.45;
+    margin-bottom: 10px; font-weight: 400; }
+  .nav-section a { display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; border-radius: 2px; font-size: 14px;
+    opacity: 0.85; transition: background .2s, opacity .2s;
+    margin: 2px -8px; }
+  .nav-section a:hover { background: rgba(200,154,62,0.08); opacity: 1; }
+  .nav-section a.active { background: rgba(200,154,62,0.16); opacity: 1;
+    color: var(--gold-pale); }
+  .nav-section a .badge { margin-left: auto; font-family: "JetBrains Mono", monospace;
+    font-size: 9px; letter-spacing: 0.1em; background: var(--gold);
+    color: var(--forest-deep); padding: 2px 6px; border-radius: 999px; font-weight: 600; }
+
+  .me { padding-top: 24px; border-top: 1px solid var(--line); margin-top: 24px; }
+  .me .avatar { width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--rust));
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic; font-size: 18px;
+    color: var(--forest-deep); margin-right: 12px; vertical-align: middle; font-weight: 400; }
+  .me-row { display: flex; align-items: center; }
+  .me-name { font-size: 14px; }
+  .me-role { font-family: "Inter", sans-serif; font-weight: 500;
+    font-size: 12px; opacity: 0.7; color: var(--gold-pale); }
+
+  /* MAIN */
+  main { padding: 32px 40px 80px; background: var(--forest); min-height: calc(100vh - 60px); }
+  @media (max-width: 900px) { main { padding: 24px 22px 60px; } }
+
+  .topbar { display: flex; justify-content: space-between; align-items: flex-end;
+    padding-bottom: 24px; border-bottom: 1px solid var(--line);
+    margin-bottom: 32px; gap: 18px; flex-wrap: wrap; }
+  .topbar h1 { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400;
+    font-size: 44px; letter-spacing: -0.025em; line-height: 1.05; }
+  .topbar h1 em { font-style: italic; color: var(--gold); }
+  .topbar .top-meta { font-family: "JetBrains Mono", monospace;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    opacity: 0.7; text-align: right; line-height: 1.7; }
+  .topbar .top-meta strong { color: var(--gold); font-weight: 500; }
+  .live { display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--sage); margin-right: 6px; vertical-align: middle;
+    animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+  }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 12px; margin-bottom: 28px; }
+  @media (max-width: 900px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+  .kpi { background: var(--forest-soft); padding: 22px 24px;
+    border: 1px solid var(--line); }
+  .kpi .v { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400;
+    font-size: 44px; line-height: 1; letter-spacing: -0.03em; color: var(--ivory); }
+  .kpi .v em { font-style: italic; color: var(--gold); }
+  .kpi .l { font-family: "JetBrains Mono", monospace; font-size: 9px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    margin-top: 10px; opacity: 0.65; line-height: 1.5; }
+
+  .feed { display: grid; grid-template-columns: 1.4fr 1fr;
+    gap: 24px; align-items: start; }
+  @media (max-width: 1100px) { .feed { grid-template-columns: 1fr; } }
+
+  .card { background: var(--forest-soft); border: 1px solid var(--line);
+    padding: 28px; margin-bottom: 20px; }
+  .card.dark { background: var(--forest-deep); }
+  .card.gold { background: var(--gold); color: var(--forest-deep); border-color: var(--gold); }
+  .card.gold em { color: var(--forest-deep); }
+
+  .card-head { display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .card.gold .card-head { border-bottom-color: rgba(20,32,26,0.2); }
+  .card-head h3 { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400;
+    font-size: 22px; letter-spacing: -0.01em; }
+  .card-head h3 em { color: var(--gold); font-style: italic; }
+  .card.gold .card-head h3 em { color: var(--forest); }
+  .card-head .small { font-family: "JetBrains Mono", monospace;
+    font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    opacity: 0.55; }
+
+  /* AGORA POSTS */
+  .post { padding: 18px 0; border-bottom: 1px dashed var(--line); }
+  .post:last-child { border-bottom: 0; }
+  .post-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .post-avatar { width: 28px; height: 28px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic; font-size: 14px;
+    color: var(--forest-deep); font-weight: 400; }
+  .a-1 { background: linear-gradient(135deg, var(--gold), var(--rust)); }
+  .a-2 { background: linear-gradient(135deg, var(--sage), #3a5a2a); color: var(--ivory); }
+  .a-3 { background: linear-gradient(135deg, var(--gold-pale), var(--gold)); }
+  .a-4 { background: linear-gradient(135deg, var(--rust), #5a2010); color: var(--ivory); }
+  .post-name { font-weight: 500; font-size: 14px; }
+  .post-meta { font-family: "JetBrains Mono", monospace; font-size: 9px;
+    letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.55; }
+  .post-title { font-family: "Inter", sans-serif;
+    font-weight: 500; font-size: 16px; line-height: 1.35; margin-bottom: 4px; color: var(--ivory); }
+  .post-snippet { font-size: 13px; opacity: 0.78; line-height: 1.55; margin-bottom: 8px; }
+  .post-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font-family: "JetBrains Mono", monospace; font-size: 9px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 3px 9px; background: var(--forest); border: 1px solid var(--line); border-radius: 999px;
+    opacity: 0.85; }
+  .tag.gold { background: var(--gold); color: var(--forest-deep); border-color: var(--gold); opacity: 1; font-weight: 600; }
+  .tag.rust { background: var(--rust); color: var(--ivory); border-color: var(--rust); opacity: 1; font-weight: 500; }
+
+  /* VOTE */
+  .vote-row { padding: 14px 0; border-bottom: 1px dashed var(--line); }
+  .vote-row:last-child { border-bottom: 0; }
+  .vote-title { font-family: "Inter", sans-serif;
+    font-weight: 500; font-size: 15px; line-height: 1.4; margin-bottom: 6px; color: var(--ivory); }
+  .vote-meta { font-family: "JetBrains Mono", monospace; font-size: 9px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    opacity: 0.6; margin-bottom: 10px; }
+  .vote-bar { display: flex; height: 5px; border-radius: 3px; overflow: hidden;
+    background: var(--line); }
+  .vote-bar .y { background: var(--gold); }
+  .vote-bar .n { background: var(--rust); }
+  .vote-bar .a { background: var(--stone); }
+  .vote-numbers { display: flex; justify-content: space-between; margin-top: 8px;
+    font-family: "JetBrains Mono", monospace; font-size: 10px;
+    letter-spacing: 0.1em; opacity: 0.7; }
+
+  /* MAP */
+  .map-card { padding: 0; overflow: hidden; }
+  .map-svg-wrap { background: linear-gradient(180deg, #1f2c1c 0%, #0a100a 100%);
+    aspect-ratio: 4/3; position: relative; }
+  .map-svg-wrap svg { width: 100%; height: 100%; display: block; }
+  .map-cap { padding: 14px 22px; background: var(--forest-deep);
+    font-family: "JetBrains Mono", monospace; font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.7;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid var(--line); }
+  .map-legend { display: flex; gap: 14px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .dot-active { background: var(--gold); }
+  .dot-mine { background: var(--rust); box-shadow: 0 0 0 2px var(--forest-deep); }
+  .dot-vacant { background: transparent; border: 1px solid var(--line-strong); }
+
+  /* MARKET ROW */
+  .market-row { display: flex; align-items: center; gap: 16px;
+    padding: 14px 0; border-bottom: 1px dashed var(--line); }
+  .market-row:last-child { border-bottom: 0; }
+  .market-img { width: 50px; height: 50px; border-radius: 4px;
+    background: linear-gradient(135deg, var(--gold), var(--rust));
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic; font-size: 22px;
+    color: var(--forest-deep); flex-shrink: 0; font-weight: 400; }
+  .market-img.m2 { background: linear-gradient(135deg, var(--sage), #2a4520); }
+  .market-img.m3 { background: linear-gradient(135deg, #8b7aa8, #5a4a7a); color: var(--ivory); }
+  .market-body { flex: 1; min-width: 0; }
+  .market-name { font-family: "Inter", sans-serif;
+    font-weight: 500; font-size: 14px; margin-bottom: 2px; color: var(--ivory); }
+  .market-by { font-size: 11px; opacity: 0.65; }
+  .market-price { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    font-weight: 400; font-size: 19px; color: var(--gold); white-space: nowrap; }
+
+  /* AGENDA */
+  .agenda-item { display: grid; grid-template-columns: 50px 1fr auto;
+    gap: 14px; align-items: center; padding: 14px 0;
+    border-bottom: 1px dashed var(--line); }
+  .agenda-item:last-child { border-bottom: 0; }
+  .agenda-date { font-family: "JetBrains Mono", monospace; font-size: 9px;
+    letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.6;
+    text-align: center; line-height: 1.3; }
+  .agenda-date strong { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; display: block;
+    font-size: 22px; font-weight: 400; color: var(--gold);
+    letter-spacing: -0.01em; font-style: italic; }
+  .agenda-title { font-family: "Inter", sans-serif;
+    font-weight: 500; font-size: 14px; line-height: 1.35; color: var(--ivory); }
+  .agenda-by { font-size: 11px; opacity: 0.65; margin-top: 2px; }
+  .agenda-when { font-family: "JetBrains Mono", monospace; font-size: 9px;
+    letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.55;
+    text-align: right; color: var(--gold-pale); }
+
+  /* LIBRARY */
+  .lib-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 700px) { .lib-grid { grid-template-columns: 1fr 1fr; } }
+  .lib-card { background: var(--forest); padding: 18px;
+    border: 1px solid var(--line); transition: background .2s; cursor: pointer; }
+  .lib-card:hover { background: var(--forest-deep); border-color: var(--gold); }
+  .lib-title { font-family: "Inter", sans-serif;
+    font-weight: 500; font-size: 14px; line-height: 1.35; margin-bottom: 4px; color: var(--ivory); }
+  .lib-meta { font-family: "JetBrains Mono", monospace; font-size: 9px;
+    letter-spacing: 0.15em; opacity: 0.55; }
+
+  .btn { display: inline-block; padding: 10px 18px;
+    background: var(--gold); color: var(--forest-deep);
+    font-family: "Inter", sans-serif; font-size: 10px; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase; border-radius: 0;
+    transition: background .2s; }
+  .btn:hover { background: var(--gold-pale); }
+  .btn.ghost { background: transparent; color: var(--ivory);
+    border: 1px solid var(--line-strong); font-weight: 500; }
+  .btn.ghost:hover { background: var(--forest-soft); color: var(--gold-pale); border-color: var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- SHARED TOP NAV -->
+<nav class="site">
+  <a href="index.html" class="brand">Ballık</a>
+  <ul>
+    <li><a href="index.html#hikaye">Hikaye</a></li>
+    <li><a href="index.html#komsular">Komşular</a></li>
+    <li><a href="index.html#mimari">Mimari</a></li>
+    <li><a href="index.html#pilotlar">Pilotlar</a></li>
+    <li><a href="ballik_market.html">Pazar</a></li>
+    <li><a href="ballik_konsept.html">Konsept</a></li>
+    <li><a href="ballik_members.html" class="active">Üye Girişi</a></li>
+    <li><a href="index.html#sorgu" style="color: var(--gold-pale); border-bottom: 1px solid currentColor; padding-bottom: 2px; opacity: 1; font-weight: 600;">Sorgu</a></li>
+  </ul>
+</nav>
+
+<div class="app">
+  <aside class="side">
+    <div class="panel-label">Meydan</div>
+    <span class="panel-sub">Üye paneli</span>
+
+    <div class="nav-section">
+      <h6>Sen</h6>
+      <a href="#feed" class="active">Bugünkü meydan</a>
+      <a href="#profil">Profilim</a>
+      <a href="#toprak">Toprağım <span class="badge">3</span></a>
+    </div>
+
+    <div class="nav-section">
+      <h6>Köy</h6>
+      <a href="ballik_market.html">Pazar</a>
+      <a href="ballik_harita.html">Harita</a>
+      <a href="#agora">Agora <span class="badge">12</span></a>
+      <a href="#takvim">Takvim</a>
+      <a href="#konsey">Konsey <span class="badge">2</span></a>
+    </div>
+
+    <div class="nav-section">
+      <h6>Hazine</h6>
+      <a href="#kutuphane">Kütüphane</a>
+    </div>
+
+    <div class="me">
+      <div class="me-row">
+        <div class="avatar">S</div>
+        <div>
+          <div class="me-name">Safi</div>
+          <div class="me-role">müzik, prodüksiyon</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div>
+        <h1><em>Hoş geldin,</em> Safi.</h1>
+        <p class="mono" style="margin-top: 8px; opacity: 0.65;">
+          <span class="live"></span>23 üye şu an çevrimiçi · Bel mevkisinde
+        </p>
+      </div>
+      <div class="top-meta">
+        <div>Bu hafta · <strong>2 oylama</strong> açık</div>
+        <div>Aylık konsey · <strong>3 Haziran · İstanbul</strong></div>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi"><div class="v">3</div><div class="l">Aktif parsel<br>senin adına</div></div>
+      <div class="kpi"><div class="v">12</div><div class="l">Bekleyen<br>iş paylaşımı</div></div>
+      <div class="kpi"><div class="v"><em>2,4</em> kg</div><div class="l">Pazardan bal<br>bu sezon</div></div>
+      <div class="kpi"><div class="v">8</div><div class="l">Komşu<br>mesajları</div></div>
+    </div>
+
+    <div class="feed">
+      <div>
+        <div class="card" id="agora">
+          <div class="card-head">
+            <h3>Agora <span style="opacity:0.5;">/</span> <em>köy meydanı</em></h3>
+            <span class="small">12 yeni · bu hafta</span>
+          </div>
+
+          <div class="post">
+            <div class="post-head">
+              <span class="post-avatar a-1">A</span>
+              <div>
+                <div class="post-name">Aşkın</div>
+                <div class="post-meta">12 saat önce · Kumluçukur</div>
+              </div>
+            </div>
+            <div class="post-title">Hayrat çeşmenin tezgâh taşı kırıldı, Cuma sabahı omuz lazım.</div>
+            <div class="post-snippet">Buse'nin mimari notuna göre eski taşı muhafaza edip çevresine yeni harç vereceğiz. Üç kişi yeter. Sabah 8'de orada olalım.</div>
+            <div class="post-tags">
+              <span class="tag rust">Yardım istiyorum</span>
+              <span class="tag">Hayrat</span>
+              <span class="tag">Cuma · 28 Mayıs</span>
+            </div>
+          </div>
+
+          <div class="post">
+            <div class="post-head">
+              <span class="post-avatar a-2">T</span>
+              <div>
+                <div class="post-name">Tuğba</div>
+                <div class="post-meta">Dün · Söben</div>
+              </div>
+            </div>
+            <div class="post-title">Üç saat fotoğraf çekimi karşılığı bir hafta sebze, var mı?</div>
+            <div class="post-snippet">Önümüzdeki hafta sonu kendi parselimde aile portresi çekimi var. Yer-su işi pas vermeyen biri lazım. Karşılığında bahçenin sebzesinden bir paket dururum.</div>
+            <div class="post-tags">
+              <span class="tag gold">Takas</span>
+              <span class="tag">Sinema</span>
+            </div>
+          </div>
+
+          <div class="post">
+            <div class="post-head">
+              <span class="post-avatar a-3">E</span>
+              <div>
+                <div class="post-name">Emre</div>
+                <div class="post-meta">2 gün önce · Bel</div>
+              </div>
+            </div>
+            <div class="post-title">Sıkıştırılmış toprak ev kalıbı sökme günü Pazar.</div>
+            <div class="post-snippet">Buse'nin yönergesiyle ilk modül kuruyup gözlemleneceği için 5 kişi rica ediyoruz. Akşam Aşkın'ın mutfağında ortak yemek var.</div>
+            <div class="post-tags">
+              <span class="tag rust">Yardım istiyorum</span>
+              <span class="tag">Mimari</span>
+              <span class="tag">Pazar · 30 Mayıs</span>
+            </div>
+          </div>
+
+          <div class="post">
+            <div class="post-head">
+              <span class="post-avatar a-4">D</span>
+              <div>
+                <div class="post-name">Diren</div>
+                <div class="post-meta">3 gün önce · Kuyuönü</div>
+              </div>
+            </div>
+            <div class="post-title">Maşta Sırası tohumu paylaşımı açık, küçük zarflar hazır.</div>
+            <div class="post-snippet">Tekin'in 255/43'teki koruma alanından topladığımız tohumları zarfladım. Üye olan herkes en fazla bir zarf alabilir.</div>
+            <div class="post-tags">
+              <span class="tag gold">Veriyorum</span>
+              <span class="tag">Toprak</span>
+              <span class="tag">Tohum bankası</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 18px;">
+            <a href="#" class="btn ghost">Tüm gönderiler</a>
+            <a href="#" class="btn" style="margin-left: 8px;">Yeni gönderi</a>
+          </div>
+        </div>
+
+        <div class="card map-card" id="harita">
+          <div class="map-svg-wrap">
+            <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(250,245,231,0.04)" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect width="600" height="450" fill="url(#grid)"/>
+              <g stroke="rgba(250,245,231,0.15)" stroke-width="1" fill="rgba(250,245,231,0.02)">
+                <path d="M40,80 L160,60 L180,180 L60,200 Z"/>
+                <text x="100" y="130" fill="rgba(250,245,231,0.5)" font-family="JetBrains Mono" font-size="9" letter-spacing="2">SÖBEN</text>
+                <path d="M180,40 L320,50 L340,160 L200,180 Z"/>
+                <text x="240" y="105" fill="rgba(250,245,231,0.5)" font-family="JetBrains Mono" font-size="9" letter-spacing="2">ARPACIK</text>
+                <path d="M340,60 L480,70 L490,200 L360,210 Z"/>
+                <text x="400" y="135" fill="rgba(250,245,231,0.5)" font-family="JetBrains Mono" font-size="9" letter-spacing="2">KUMLUÇUKUR</text>
+                <path d="M60,220 L200,210 L220,330 L80,340 Z"/>
+                <text x="120" y="280" fill="rgba(250,245,231,0.5)" font-family="JetBrains Mono" font-size="9" letter-spacing="2">ELMAYANI</text>
+                <path d="M220,200 L360,220 L360,350 L240,350 Z"/>
+                <text x="280" y="290" fill="rgba(250,245,231,0.5)" font-family="JetBrains Mono" font-size="9" letter-spacing="2">ÇAMLIÇUKUR</text>
+                <path d="M380,220 L520,230 L520,360 L400,360 Z"/>
+                <text x="430" y="300" fill="rgba(250,245,231,0.5)" font-family="JetBrains Mono" font-size="9" letter-spacing="2">BEL</text>
+              </g>
+              <g>
+                <circle cx="120" cy="260" r="6" fill="#c75c3e" stroke="#0a100a" stroke-width="2"/>
+                <circle cx="290" cy="290" r="6" fill="#c75c3e" stroke="#0a100a" stroke-width="2"/>
+                <circle cx="450" cy="295" r="6" fill="#c75c3e" stroke="#0a100a" stroke-width="2"/>
+                <circle cx="90" cy="130" r="5" fill="#c89a3e"/>
+                <circle cx="140" cy="150" r="5" fill="#c89a3e"/>
+                <circle cx="240" cy="80" r="5" fill="#c89a3e"/>
+                <circle cx="280" cy="120" r="5" fill="#c89a3e"/>
+                <circle cx="220" cy="160" r="5" fill="#c89a3e"/>
+                <circle cx="380" cy="100" r="5" fill="#c89a3e"/>
+                <circle cx="420" cy="140" r="5" fill="#c89a3e"/>
+                <circle cx="460" cy="170" r="5" fill="#c89a3e"/>
+                <circle cx="100" cy="280" r="5" fill="#c89a3e"/>
+                <circle cx="180" cy="240" r="5" fill="#c89a3e"/>
+                <circle cx="160" cy="320" r="5" fill="#c89a3e"/>
+                <circle cx="260" cy="240" r="5" fill="#c89a3e"/>
+                <circle cx="320" cy="260" r="5" fill="#c89a3e"/>
+                <circle cx="320" cy="320" r="5" fill="#c89a3e"/>
+                <circle cx="260" cy="330" r="5" fill="#c89a3e"/>
+                <circle cx="410" cy="260" r="5" fill="#c89a3e"/>
+                <circle cx="480" cy="250" r="5" fill="#c89a3e"/>
+                <circle cx="430" cy="330" r="5" fill="#c89a3e"/>
+                <circle cx="70" cy="160" r="4" fill="none" stroke="rgba(250,245,231,0.4)" stroke-width="1"/>
+                <circle cx="200" cy="100" r="4" fill="none" stroke="rgba(250,245,231,0.4)" stroke-width="1"/>
+                <circle cx="320" cy="170" r="4" fill="none" stroke="rgba(250,245,231,0.4)" stroke-width="1"/>
+                <circle cx="440" cy="200" r="4" fill="none" stroke="rgba(250,245,231,0.4)" stroke-width="1"/>
+              </g>
+              <text x="20" y="430" fill="rgba(250,245,231,0.5)" font-family="JetBrains Mono" font-size="9" letter-spacing="2">KÖY HARİTASI · 34 / 72 AKTİF MEVKİ</text>
+            </svg>
+          </div>
+          <div class="map-cap">
+            <div class="map-legend">
+              <span class="legend-item"><span class="legend-dot dot-mine"></span>Senin parselin</span>
+              <span class="legend-item"><span class="legend-dot dot-active"></span>Komşu</span>
+              <span class="legend-item"><span class="legend-dot dot-vacant"></span>Boş</span>
+            </div>
+            <span>Detay için bir mevkiye tıkla</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card dark" id="konsey">
+          <div class="card-head">
+            <h3>Konsey <span style="opacity:0.5;">/</span> <em>açık oylamalar</em></h3>
+            <span class="small">B-LEKM</span>
+          </div>
+
+          <div class="vote-row">
+            <div class="vote-title">Samandamı atölye domlarına ortak elektrik hattı.</div>
+            <div class="vote-meta">Mevki ağırlıklı · 5 gün kaldı</div>
+            <div class="vote-bar">
+              <div class="y" style="width:62%"></div>
+              <div class="n" style="width:18%"></div>
+              <div class="a" style="width:20%"></div>
+            </div>
+            <div class="vote-numbers">
+              <span>Evet 62%</span><span>Hayır 18%</span><span>Çekimser 20%</span>
+            </div>
+          </div>
+
+          <div class="vote-row">
+            <div class="vote-title">Pazar'a köy dışı satış: ilk fazda kapalı kalsın mı?</div>
+            <div class="vote-meta">Toprak sahibi ağırlıklı · 12 gün kaldı</div>
+            <div class="vote-bar">
+              <div class="y" style="width:78%"></div>
+              <div class="n" style="width:14%"></div>
+              <div class="a" style="width:8%"></div>
+            </div>
+            <div class="vote-numbers">
+              <span>Evet 78%</span><span>Hayır 14%</span><span>Çekimser 8%</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 18px;">
+            <a href="#" class="btn ghost">Tüm oylamalar</a>
+          </div>
+        </div>
+
+        <div class="card" id="takvim">
+          <div class="card-head">
+            <h3>Bu hafta <span style="opacity:0.5;">/</span> <em>köyde</em></h3>
+            <span class="small">28 Mayıs - 3 Haziran</span>
+          </div>
+
+          <div class="agenda-item">
+            <div class="agenda-date"><strong>28</strong>CUM</div>
+            <div>
+              <div class="agenda-title">Hayrat çeşme onarımı</div>
+              <div class="agenda-by">Aşkın · Kumluçukur</div>
+            </div>
+            <div class="agenda-when">08:00</div>
+          </div>
+
+          <div class="agenda-item">
+            <div class="agenda-date"><strong>29</strong>CMT</div>
+            <div>
+              <div class="agenda-title">Açık hava yoga</div>
+              <div class="agenda-by">Berna · Çamlıçukur</div>
+            </div>
+            <div class="agenda-when">07:30</div>
+          </div>
+
+          <div class="agenda-item">
+            <div class="agenda-date"><strong>30</strong>PAZ</div>
+            <div>
+              <div class="agenda-title">Sıkıştırılmış toprak kalıp sökme</div>
+              <div class="agenda-by">Buse, Birhan · Bel 276/16</div>
+            </div>
+            <div class="agenda-when">10:00</div>
+          </div>
+
+          <div class="agenda-item">
+            <div class="agenda-date"><strong>02</strong>SAL</div>
+            <div>
+              <div class="agenda-title">Haftalık çevrimiçi konsey</div>
+              <div class="agenda-by">Zoom · şifre üyelere yollanır</div>
+            </div>
+            <div class="agenda-when">20:30</div>
+          </div>
+
+          <div class="agenda-item">
+            <div class="agenda-date"><strong>03</strong>ÇAR</div>
+            <div>
+              <div class="agenda-title">İstanbul aylık buluşma</div>
+              <div class="agenda-by">Kantin · Karaköy</div>
+            </div>
+            <div class="agenda-when">19:00</div>
+          </div>
+        </div>
+
+        <div class="card gold">
+          <div class="card-head" style="border-bottom-color: rgba(20,32,26,0.18);">
+            <h3>Pazar <span style="opacity:0.5;">/</span> <em>üye-üye</em></h3>
+            <span class="small" style="color: var(--forest-deep); opacity: 0.7;">Yeni · bu hafta</span>
+          </div>
+
+          <div class="market-row" style="border-bottom-color: rgba(20,32,26,0.15);">
+            <div class="market-img">B</div>
+            <div class="market-body">
+              <div class="market-name" style="color: var(--forest-deep);">Çiçek balı, 450g</div>
+              <div class="market-by" style="color: var(--forest-deep);">Aşkın · Kumluçukur · 8 kovan</div>
+            </div>
+            <div class="market-price" style="color: var(--forest-deep);">₺320</div>
+          </div>
+
+          <div class="market-row" style="border-bottom-color: rgba(20,32,26,0.15);">
+            <div class="market-img m3">L</div>
+            <div class="market-body">
+              <div class="market-name" style="color: var(--forest-deep);">Lavanta esans yağı, 10 ml</div>
+              <div class="market-by" style="color: var(--forest-deep);">Tekin · 255/43 hasadından</div>
+            </div>
+            <div class="market-price" style="color: var(--forest-deep);">₺180</div>
+          </div>
+
+          <div class="market-row" style="border-bottom-color: rgba(20,32,26,0.15);">
+            <div class="market-img">M</div>
+            <div class="market-body">
+              <div class="market-name" style="color: var(--forest-deep);">Maşta Sırası, kuru 50g</div>
+              <div class="market-by" style="color: var(--forest-deep);">Diren · sınırlı stok</div>
+            </div>
+            <div class="market-price" style="color: var(--forest-deep);">₺140</div>
+          </div>
+
+          <div class="market-row">
+            <div class="market-img m2">K</div>
+            <div class="market-body">
+              <div class="market-name" style="color: var(--forest-deep);">Mimari danışmanlık, 1 saat</div>
+              <div class="market-by" style="color: var(--forest-deep);">Buse · online ya da Bel'de</div>
+            </div>
+            <div class="market-price" style="color: var(--forest-deep);">₺800</div>
+          </div>
+
+          <div style="margin-top: 18px;">
+            <a href="ballik_market.html" class="btn" style="background: var(--forest-deep); color: var(--gold-pale);">Tüm pazara git</a>
+          </div>
+        </div>
+
+        <div class="card" id="kutuphane">
+          <div class="card-head">
+            <h3>Kütüphane <span style="opacity:0.5;">/</span> <em>köyün hafızası</em></h3>
+            <span class="small">42 doküman</span>
+          </div>
+          <div class="lib-grid">
+            <div class="lib-card"><div class="lib-title">Likya ahşap ev tipolojisi</div><div class="lib-meta">PDF · Buse Atınç</div></div>
+            <div class="lib-card"><div class="lib-title">Sıkıştırılmış toprak uygulama</div><div class="lib-meta">PDF · 36 sayfa</div></div>
+            <div class="lib-card"><div class="lib-title">Su politikası, sarnıç</div><div class="lib-meta">DOC · ortak yazım</div></div>
+            <div class="lib-card"><div class="lib-title">Tohum bankası kaydı</div><div class="lib-meta">XLSX · 73 tür</div></div>
+            <div class="lib-card"><div class="lib-title">Konsey tutanakları 2025</div><div class="lib-meta">12 PDF · arşiv</div></div>
+            <div class="lib-card"><div class="lib-title">Kayıt sample paketleri</div><div class="lib-meta">ZIP · Şafak, Alp</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Ballık · Konsept Dosyası</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #14201a;
+    --forest-deep: #0a100a;
+    --forest-soft: #1f2c1c;
+    --ivory: #faf5e7;
+    --gold: #c89a3e;
+    --gold-pale: #e8c878;
+    --rust: #c75c3e;
+    --sage: #6b8a5a;
+    --stone: #6b6863;
+    --line: rgba(250,245,231,0.12);
+    --line-strong: rgba(250,245,231,0.25);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--forest); color: var(--ivory);
+    font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400; line-height: 1.65; font-size: 17px;
+    letter-spacing: -0.005em; -webkit-font-smoothing: antialiased; }
+  a { color: var(--gold-pale); text-decoration: none;
+    border-bottom: 1px solid var(--line); transition: border-color .2s, color .2s; }
+  a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+  img, svg { display: block; max-width: 100%; }
+  em { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    font-weight: 400; color: var(--gold); }
+  strong { color: var(--gold-pale); font-weight: 500; }
+
+  nav.site { background: var(--forest-deep); color: var(--ivory);
+    padding: 18px 36px; display: flex; align-items: center;
+    justify-content: space-between; gap: 24px;
+    border-bottom: 1px solid var(--line); }
+  nav.site .brand { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 26px; letter-spacing: -0.015em; line-height: 1;
+    color: var(--ivory); border-bottom: 0; }
+  nav.site ul { list-style: none; display: flex; gap: 24px; }
+  nav.site ul a { font-family: "Inter", sans-serif; font-size: 11px;
+    letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500;
+    opacity: 0.8; transition: opacity .2s; color: var(--ivory); border-bottom: 0; }
+  nav.site ul a:hover { opacity: 1; color: var(--ivory); }
+  nav.site ul a.active { opacity: 1; color: var(--gold-pale);
+    border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+  @media (max-width: 900px) {
+    nav.site { padding: 14px 18px; flex-wrap: wrap; gap: 12px; }
+    nav.site ul { gap: 14px; flex-wrap: wrap; }
+  }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 80px 48px 120px; }
+  @media (max-width: 900px) { .wrap { padding: 48px 24px 80px; } }
+
+  .hero { padding: 32px 0 56px; border-bottom: 1px solid var(--line); margin-bottom: 60px; }
+  .eyebrow { font-family: "Inter", sans-serif; font-weight: 500; font-size: 11px;
+    letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold);
+    margin: 0 0 18px; }
+  h1 { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400;
+    font-size: clamp(64px, 9vw, 120px); line-height: 0.95;
+    letter-spacing: -0.025em; margin: 0 0 14px; color: var(--ivory); }
+  h1 em { font-style: italic; color: var(--gold); }
+  .lede { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    font-size: clamp(20px, 1.8vw, 26px); line-height: 1.45; color: var(--ivory);
+    max-width: 760px; margin-top: 18px; opacity: 0.92; }
+  .lede em { color: var(--gold-pale); }
+  .meta { display: flex; gap: 28px; margin-top: 32px;
+    font-family: "Inter", sans-serif; font-size: 11px; font-weight: 500;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--stone);
+    flex-wrap: wrap; }
+  .meta span strong { color: var(--gold-pale); font-weight: 500; }
+
+  section { margin: 90px 0; scroll-margin-top: 24px; }
+  .sec-no { display: inline-block; font-family: "Inter", sans-serif;
+    font-weight: 500; font-size: 11px; color: var(--gold);
+    letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 16px; }
+  h2 { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400;
+    font-size: clamp(38px, 5vw, 64px); line-height: 1.05;
+    letter-spacing: -0.022em; color: var(--ivory); margin: 0 0 28px; }
+  h2 em { font-style: italic; color: var(--gold); }
+  h3 { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-style: italic;
+    font-weight: 400; font-size: 28px; line-height: 1.2;
+    letter-spacing: -0.01em; margin: 40px 0 14px; color: var(--gold-pale); }
+  h4 { font-family: "Inter", sans-serif; font-weight: 500; font-size: 12px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold); margin: 32px 0 10px; }
+  p { margin: 0 0 16px; }
+
+  .card { background: var(--forest-soft); border: 1px solid var(--line);
+    padding: 28px 32px; margin: 20px 0; }
+  .card.gold { background: var(--gold); color: var(--forest-deep);
+    border-color: var(--gold); }
+  .card.gold em, .card.gold strong { color: var(--forest-deep); }
+  .card.gold h3, .card.gold h4 { color: var(--forest-deep); }
+  .card.deep { background: var(--forest-deep); }
+
+  ul.clean { list-style: none; padding: 0; margin: 14px 0; }
+  ul.clean li { padding: 12px 0 12px 24px; border-bottom: 1px dashed var(--line);
+    position: relative; }
+  ul.clean li:before { content: "·"; position: absolute; left: 8px; top: 4px;
+    font-size: 28px; color: var(--gold); line-height: 1; }
+  ul.clean li:last-child { border-bottom: 0; }
+
+  .sitemap { display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    margin: 28px 0; }
+  .sitemap .branch { border: 1px solid var(--line); padding: 22px 24px;
+    background: var(--forest-soft); }
+  .sitemap .branch h4 { margin-top: 0; color: var(--gold); }
+  .sitemap .branch ol { padding-left: 18px; margin: 8px 0; font-size: 14px; }
+  .sitemap .branch li { padding: 5px 0; opacity: 0.9; }
+  @media (max-width: 800px) { .sitemap { grid-template-columns: 1fr; } }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold);
+    padding: 36px 0; margin: 28px 0 50px; }
+  .stat { text-align: center; border-right: 1px solid var(--line); padding: 0 16px; }
+  .stat:last-child { border-right: 0; }
+  .stat .num { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400;
+    font-size: 56px; line-height: 1; color: var(--gold);
+    font-style: italic; }
+  .stat .lbl { font-family: "Inter", sans-serif; font-weight: 500; font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--stone);
+    margin-top: 12px; }
+  @media (max-width: 700px) { .stats { grid-template-columns: repeat(2,1fr); }
+    .stat { padding: 16px; } .stat .num { font-size: 40px; } }
+
+  .toc { background: var(--forest-soft); padding: 28px 32px;
+    border: 1px solid var(--line); }
+  .toc ol { margin: 12px 0 0; padding-left: 24px; }
+  .toc li { padding: 5px 0; font-size: 15px; }
+  .toc a { color: var(--ivory); border-bottom: 0; }
+  .toc a:hover { color: var(--gold); }
+
+  .pilot { display: grid; grid-template-columns: 80px 1fr; gap: 28px;
+    padding: 28px 0; border-bottom: 1px solid var(--line); }
+  .pilot:last-child { border-bottom: 0; }
+  .pilot .pno { font-family: "Inter Tight", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 400;
+    font-size: 64px; line-height: 1; color: var(--gold); font-style: italic; }
+  .pilot h3 { margin-top: 0; color: var(--ivory); font-style: italic; }
+  .pilot .pmeta { font-family: "Inter", sans-serif; font-weight: 500; font-size: 11px;
+    letter-spacing: 0.15em; color: var(--gold-pale); text-transform: uppercase;
+    margin: 6px 0 14px; opacity: 0.85; }
+
+  footer { margin-top: 100px; padding-top: 40px; border-top: 1px solid var(--line);
+    font-family: "Inter", sans-serif; font-weight: 500; font-size: 11px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--stone); opacity: 0.7; }
+</style>
+</head>
+<body>
+
+<nav class="site">
+  <a href="index.html" class="brand">Ballık</a>
+  <ul>
+    <li><a href="index.html#hikaye">Hikaye</a></li>
+    <li><a href="index.html#komsular">Komşular</a></li>
+    <li><a href="index.html#mimari">Mimari</a></li>
+    <li><a href="index.html#pilotlar">Pilotlar</a></li>
+    <li><a href="ballik_market.html">Pazar</a></li>
+    <li><a href="ballik_konsept.html" class="active">Konsept</a></li>
+    <li><a href="ballik_members.html">Üye Girişi</a></li>
+    <li><a href="index.html#sorgu" style="color: var(--gold-pale); border-bottom: 1px solid currentColor; padding-bottom: 2px; opacity: 1; font-weight: 600;">Sorgu</a></li>
+  </ul>
+</nav>
+
+<div class="wrap">
+
+<header class="hero">
+  <p class="eyebrow">Konsept Dosyası · v0.6 · 2026</p>
+  <h1>Ballık</h1>
+  <p class="lede">Burdur'un yüksek dağlarında, Kabalis'in unutulmuş tetrapolisinin eteğinde, eski adıyla <em>Maşta</em>. Bugün burada, yüz aileyi aşan bir kolektif yeniden köy kuruyor.</p>
+  <div class="meta">
+    <span>Konum · <strong>Ballık Köyü, Altınyayla / Burdur</strong></span>
+    <span>Rakım · <strong>1.050-1.600 m</strong></span>
+    <span>Model · <strong>B-LEKM</strong></span>
+  </div>
+</header>
+
+<div class="toc">
+  <h4>İçindekiler</h4>
+  <ol>
+    <li><a href="#manifesto">Manifesto · Üç Cümlede Ballık</a></li>
+    <li><a href="#zemin">Zemin · Kabalis, Kibyra ve Boncuk Dağları</a></li>
+    <li><a href="#masta">Maşta · Köyün önceki adı</a></li>
+    <li><a href="#bugun">Ballık Bugün · Kolektifin durumu</a></li>
+    <li><a href="#yonetim">Yönetim · Likya Birliği'nden Miras</a></li>
+    <li><a href="#anatomi">Kolektifin Anatomisi · Sayısal Manzara</a></li>
+    <li><a href="#ilkeler">Yaşam İlkeleri</a></li>
+    <li><a href="#mimari">Mimari Doku · Likya Ahşabı ve Sıkıştırılmış Toprak</a></li>
+    <li><a href="#toprak">Toprak ve Üretim · Aromatik Tarım</a></li>
+    <li><a href="#pilot">Pilot Projeler</a></li>
+  </ol>
+</div>
+
+<section id="manifesto">
+  <span class="sec-no">01 · Manifesto</span>
+  <h2>Üç cümlede <em>Ballık</em>.</h2>
+  <p>Ballık bir tatil yeri değil, bir <em>topluluk toprağı</em>. Burada bir araya gelen insanlar evlerini, atölyelerini, tarlalarını ayrı ayrı kuruyor ama nefeslerini birlikte alıyor: müzik prodüksiyonu, sinema, mimari, gastronomi, yoga, permakültür, denizcilik, oyun ve yazılım, hepsi aynı dağın eteğinde örülüyor.</p>
+  <p>Bu web projesi iki kapıdan oluşuyor. Birincisi herkese açık <strong>kamusal kapı</strong>: Ballık'ın hikayesi, Kabalis'in tetrapolisinden bugünkü kolektife uzanan ip. İkincisi sadece üyelerin gördüğü <strong>iç kapı</strong>: birbirini tanıyan, birbirinin işine yer açan, ortak kaynaklarını paylaşan canlı bir dijital köy meydanı, içinde küçük bir pazar.</p>
+</section>
+
+<section id="zemin">
+  <span class="sec-no">02 · Zemin</span>
+  <h2>Kabalis, Kibyra · <em>Boncuk Dağları.</em></h2>
+  <p>Likyalılar bugün hatırlandıkları lahit ve liman şehirleriyle birlikte sahil halkıdır. Ama o sahil onların ilk evi değil. Bu coğrafyanın en eski adımları yüksekte atılır: Toroslar'ın iç yaylalarında, kar suyu ile beslenen, kekik ve ardıç kokan dağ yamaçlarında.</p>
+  <p>Ballık tam bu dokuda yatar. Antik çağda <em>Kabalia</em> adıyla bilinen bu yamaç, Kibyra, Boubon, Balboura ve Oinoanda dört şehirden oluşan bir birliğin yurduydu. Tetrapolis'in karar mekanizması bir oylama düzeniydi. Strabon'a göre Kibyra otuz bin piyade ve iki bin süvariyi seferber edebildiği için kararlarda iki oy kullanırdı; diğer üç şehir birer oy.</p>
+  <p>Bu küçük federal düzen MÖ 82'de Romalı general Murena tarafından dağıtıldı; Kibyra Asya eyaletine, diğer üç şehir Likya Birliği'ne bağlandı. Ama oylama fikri orada kalmadı: Likya Birliği'nin temsili federal sistemi Montesquieu'nün dikkatini çekti, oradan Madison ve Hamilton'a uzandı, ABD anayasasının altyapısına sızdı.</p>
+  <p>Ballık'ta bugün arazi sahibi olmak, sadece bir manzaraya değil, bir <em>fikre</em> yakın olmak demektir.</p>
+
+  <div class="card gold">
+    <h3 style="margin-top:0;">Bir cümleyle</h3>
+    <p style="margin-bottom:0;">Ballık, Kabalis Tetrapolisi'nin sessiz yamacında, antik bir oylamayı bugünün ortak kararlarıyla yeniden kuran bir köydür.</p>
+  </div>
+</section>
+
+<section id="masta">
+  <span class="sec-no">03 · Ad</span>
+  <h2><em>Maşta</em> · köyün önceki adı.</h2>
+  <p>Ballık'ın eski adı <strong>Maşta</strong>'ydı. Osmanlı kökenli bu kelime <em>"kışı sert olan yer"</em> anlamına gelir. Köyün yüksek rakımı, soğuk ve uzun kışı, bu adı doğrudan üretmiştir. Dağda büyüyen bir endemik yabani kimyon türünün yerel adı da hâlâ <em>Maşta Sırası</em>'dır: bitki adını köyden almıştır.</p>
+  <p>Daha sonra köy Ballık adını aldı; çünkü çiçek, ardıç ve kekik kuşağı arasında, dağda yapılan balın yeriydi. Ad değişti ama hafıza ikisini de tutuyor.</p>
+</section>
+
+<section id="bugun">
+  <span class="sec-no">04 · Bugün</span>
+  <h2>Ballık bugün · <em>kolektifin durumu.</em></h2>
+  <p>İlk arazi alımı Mart 2023'te yapıldı. Bugün, otuz dört aydır süren bir akış: yüzü aşkın toprak sahibi, üç yüz dönümün üzerinde arazi, otuzu aşkın aktif mevki, beş ana planlama bölgesi. Köyün toplamda 72 mevkisi var; kolektif bunların yarısında şu an etkin.</p>
+  <p>Birey mülkiyeti korunur; altyapı, planlama, hizmetler ve temsil ortak karar mekanizmalarıyla yönetilir. Üç bölgede yol iyileştirmesi, meyve fidanı ve lavanta dikimi, köy düğün alanına destek ve bir hayratın inşası bu süre içinde tamamlandı.</p>
+</section>
+
+<section id="yonetim">
+  <span class="sec-no">05 · Yönetim</span>
+  <h2>Likya Birliği'nden <em>miras.</em></h2>
+  <p>Ballık Kolektif'in yönetim modeli iki katmandan oluşur:</p>
+  <p><strong>Bölgesel oy hakkı</strong> her mevkinin nüfusuna ve ekonomik katkısına göre dengelenir. Bu, Kabalis Tetrapolisi'nde Kibyra'nın iki, diğer üç şehrin birer oy taşıdığı sistemin mantığıdır: büyüklük temsil edilir, ama hiçbir mevki sessize düşmez.</p>
+  <p><strong>Toprak sahibi temsili</strong> parselin büyüklüğüne ve sayısına göre işler. Bir kişinin tek parseli de bir oy hakkı taşır; çoklu parsel ise orantılı temsil sağlar.</p>
+  <p>Toprak sahipleri ayrıca, kolektifin temel ilkelerine, mülk güvenliğine ya da uzun vade dengesine ters düşen kararlara karşı <strong>Koruyucu Veto Hakkı</strong> taşır. Bu hak istisnaidir, gerekçelidir, kayıt altına alınır.</p>
+  <p>Konseyler haftalık çevrimiçi, aylık olarak Ankara, İstanbul, İzmir, Fethiye, Bodrum, Berlin, Abu Dabi ve New York kentlerinde fiziksel olarak toplanır.</p>
+
+  <div class="card deep">
+    <h3 style="margin-top:0;">Soy zinciri</h3>
+    <p style="margin-bottom:0;">Kabalis Tetrapolisi (MÖ 2.-1. yy) → Likya Birliği (Patara Bouleuterion) → Montesquieu (<em>De l'esprit des lois</em>, 1748) → Madison ve Hamilton (Federalist Papers, 1788) → <strong>Ballık Lycian-inspired Collective Model · B-LEKM (2026)</strong>.</p>
+  </div>
+</section>
+
+<section id="anatomi">
+  <span class="sec-no">06 · İnfografi</span>
+  <h2>Kolektifin <em>anatomisi.</em></h2>
+  <p>İsim vermeden, sadece disiplin ve toprak.</p>
+
+  <div class="stats">
+    <div class="stat"><div class="num">72</div><div class="lbl">Köy mevkisi</div></div>
+    <div class="stat"><div class="num">100<em>+</em></div><div class="lbl">Toprak sahibi</div></div>
+    <div class="stat"><div class="num">300<em>+</em></div><div class="lbl">Dönüm</div></div>
+    <div class="stat"><div class="num">15</div><div class="lbl">Disiplin ailesi</div></div>
+  </div>
+
+  <h3>Disiplin dağılımı</h3>
+  <p>Sağlık ve beden çalışmaları, mimari ve yapı, gastronomi, sinema ve müzik bunlar kolektifin en kalın damarları.</p>
+
+  <ul class="clean">
+    <li>Sağlık &amp; Beden · 15,2%</li>
+    <li>Mimari &amp; Yapı · 11,7%</li>
+    <li>Gastronomi · 8,5%</li>
+    <li>Yatırım &amp; Girişim · 8,1%</li>
+    <li>Sinema &amp; Görüntü · 7,6%</li>
+    <li>Müzik &amp; Ses · 6,7%</li>
+    <li>Görsel Sanat &amp; Tasarım · 5,8%</li>
+    <li>Oyun &amp; Teknoloji · 4,5%</li>
+    <li>Deniz &amp; Yol · 4,0%</li>
+    <li>Topluluk &amp; Organizasyon · 4,0%</li>
+    <li>Medya &amp; Yazı · 3,6%</li>
+    <li>Akademi, Eğitim, Hukuk · 3,6%</li>
+    <li>Toprak &amp; Ekoloji · 2,2%</li>
+    <li>Sahne &amp; Performans · 0,9%</li>
+  </ul>
+</section>
+
+<section id="ilkeler">
+  <span class="sec-no">07 · İlkeler</span>
+  <h2>Yaşam <em>ilkeleri.</em></h2>
+  <ul class="clean">
+    <li><strong>Anıt ağaçlar korunur.</strong> Köyde belgelenmemiş anıt dut, ardıç ve sedir ağaçları vardır; her biri için doğal ahşap bilgi panosu yapılacaktır.</li>
+    <li><strong>Yaban hayatına saygı gösterilir.</strong> Dişi hayvan avlanmaz. Avlanma yasal sezon dışında yapılmaz, rehberlik yerel sakinler tarafından sağlanır.</li>
+    <li><strong>Pestisit kullanılmaz.</strong> Alternatif mineraller tercih edilir.</li>
+    <li><strong>Su, altyapı değil canlı bir sistemdir.</strong> Yer altı ve yüzey sarnıçları, geleneksel sulama kanalları ve Roma hidroloji bilgeliği bir arada düşünülür.</li>
+    <li><strong>Hayratlar.</strong> Köy çeşmeleri ortak mimari dilde, hayrat olarak ve aramızdan ayrılanların hatırasına yapılır.</li>
+    <li><strong>Agora.</strong> Konsey toplantıları, buluşmalar, kültür ve eğitim için ortak yaşam merkezi.</li>
+    <li><strong>Enerji ve iletişim.</strong> Rüzgâra açık dağ geçitlerinde rüzgâr enerjisi; doğu-batı-güney eksenlerinde, ortak alanlarda güneş paneli; internet erişimi olmayan bölgelerde uydu teknolojisi.</li>
+  </ul>
+</section>
+
+<section id="mimari">
+  <span class="sec-no">08 · Mimari</span>
+  <h2>Mimari doku · <em>iki dil.</em></h2>
+  <p>Ballık'ta her ev kendi parseline göre yapılır: kendi eğimine, kendi ışığına, kendi rüzgârına. Ama iki ortak yapı dilinden birini konuşur.</p>
+
+  <h3>Likya tipi ahşap ev</h3>
+  <p>Çivisiz geçme tekniği, taş temel ve sedir-ardıç taşıyıcı sistem ile Likya uygarlığının sivil mimarisi yüzyıllar sonra yeniden canlandırılır.</p>
+  <ul class="clean">
+    <li>Dikdörtgen plan oturumu</li>
+    <li>İki kat etkisi (alt kat depo olarak kullanılır)</li>
+    <li>Geniş saçaklı tek eğimli çatı</li>
+    <li>Ön cephede ahşap yapıyı açığa çıkaran grid</li>
+    <li>Su basmanı 40-60 cm, toplam yükseklik 4,0-4,5 m</li>
+  </ul>
+
+  <h3>Sıkıştırılmış toprak ev</h3>
+  <p>Ballık toprağı doğal olarak yeterli kil içerir; sıkıştırılmış toprak duvar için ek stabilizatör veya bağlayıcı gerekmez. Yerel toprak sıkıştırma sonrası yüksek dayanım ve termal kütle sağlar.</p>
+  <ul class="clean">
+    <li>Toprak 10-15 cm katmanlarla kalıba yerleştirilir, tampernle sıkıştırılır</li>
+    <li>Kalıp kademeli yükseltilir; monolitik duvar oluşur</li>
+    <li>Ortalama duvar kalınlığı 40-60 cm</li>
+    <li>Çatı: ahşap kirişler üzerine geri dönüşüm kamyon brandası, drenaj, geotekstil ve 10-20 cm bitki toprağı (yeşil çatı)</li>
+  </ul>
+</section>
+
+<section id="toprak">
+  <span class="sec-no">09 · Toprak</span>
+  <h2>Toprak ve üretim · <em>aromatik tarım.</em></h2>
+  <p>Ballık toprağı kireçtaşı karışımlı kırmızı topraktır; drenajı yüksektir, güneş alır, soğuk kışla sertleşmiştir. Bu, lavanta, kekik, adaçayı, altınotu gibi Akdeniz aromatiklerinin bayıldığı bir zemindir.</p>
+  <p>Köyün doğal hediyeleri arasında <strong>bal, kuzugöbeği mantarı, safran ve Maşta Sırası</strong> (endemik yabani kimyon) vardır. Aromatik bitki ailesi <strong>kekik, lavanta, altınotu, adaçayı ve niaouli</strong>'den oluşur. Ağaç dokusu <strong>gölgelik için sedir ve ardıç</strong>, çit ve peyzaj için <strong>kuşburnu, alıç, ceviz, kestane</strong>'den örülür.</p>
+  <p>Köyde Rum dönemine ait bağ izleri de vardır. Üzüm, yeniden denenmek üzere yol haritasında durur: antik Kabalis'in şarap bağlarının Ballık'ta bir damarı uyandırılabilir.</p>
+
+  <div class="card">
+    <h3 style="margin-top:0;">Yıl boyu nektar akışı</h3>
+    <p style="margin-bottom:0;">Lavanta → Maşta Sırası → Kuşburnu. Bu sıra ile yıl boyu nektar akışı sağlanır; arılar bu peyzajın görünmeyen işçileri olarak verimliliği yaklaşık <strong>%25</strong> artırır.</p>
+  </div>
+</section>
+
+<section id="pilot">
+  <span class="sec-no">10 · Pilot</span>
+  <h2>Pilot <em>projeler.</em></h2>
+  <p>Konsept somut hâline geldiği yerlerde okunur. Şu an dört aktif pilot var.</p>
+
+  <div class="pilot">
+    <div class="pno">01</div>
+    <div>
+      <h3 style="margin-top:0;">255/43 Kumluçukur · Aromatik Tarım ve Ekolojik Peyzaj</h3>
+      <p class="pmeta">~1.000 m² · proje: Tekin Yücel · sunan: Burak Gözalan</p>
+      <p>Üst terasa <strong>1.000 fide Lavandula intermedia</strong>, güneybatı köşesine 25 m² Maşta Sırası koruma alanı, köşelere alıç, çit hattına kuşburnu, doğu kenarına iki Boz Ardıç. Doğu meşelik sınır hattında 8 arı kovanı. 500 L yer altı su deposu, yüzey drenajı ve solar kablo kanalı rezervi. <strong>Toplam yatırım: ₺141.700</strong>. Üç yıl içinde lavanta, bal ve kimyon üretiminden kendini döndüren ekonomik sistem hedefleniyor.</p>
+    </div>
+  </div>
+
+  <div class="pilot">
+    <div class="pno">02</div>
+    <div>
+      <h3 style="margin-top:0;">276/16 Bel · Sıkıştırılmış Toprak Ev</h3>
+      <p class="pmeta">mimari: Buse Atınç · yönetim: Birhan Erkutlu, Tekin Yücel</p>
+      <p>Bel mahallesinde, köyün güneybatı girişinde. Ballık'ın kendi toprağıyla, ek bağlayıcı kullanmadan inşa edilen ilk <strong>sıkıştırılmış toprak</strong> ev modeli. 40-60 cm kalınlıkta monolitik duvarlar, yeşil çatı sistemi, geri dönüşüm kamyon brandasıyla su yalıtımı. Kolektifin yapı dili için referans yapı.</p>
+    </div>
+  </div>
+
+  <div class="pilot">
+    <div class="pno">03</div>
+    <div>
+      <h3 style="margin-top:0;">276/13 Bel · Sıkıştırılmış Toprak Sosyal Kulüp</h3>
+      <p class="pmeta">mimari: Buse Atınç · yönetim: Birhan Erkutlu, Tekin Yücel, Aşkın Göçer</p>
+      <p>Sıkıştırılmış Toprak Ev'in komşusundaki tesis alanı. Sosyal etkinlikler ve buluşmalar için: ortak yemek, müzik geceleri, konsey ön toplantıları, sanatçı misafirler için yumuşak bir meydan. Mimari dil birinci pilotla aynıdır; yapı pratiği ikinci ölçek olarak tekrarlanır.</p>
+    </div>
+  </div>
+
+  <div class="pilot">
+    <div class="pno">04</div>
+    <div>
+      <h3 style="margin-top:0;">Samandamı · Ballık Collective Atölye</h3>
+      <p class="pmeta">5 dönüm · Koyunkıralanı ile ekoköy kavşağı</p>
+      <p>Üretim ve ekolojik çalışmalar için yeni bir atölye alanı. Mevcut iki adet <strong>4 m çapında çelik iskeletli dome</strong> su geçirmez dış membranla kaplanır, içeride ahşap detayla güçlendirilir. Aromatik distilasyon, küçük ölçek tohum bankası, kayıt odası gibi karma kullanım hedeflenir.</p>
+    </div>
+  </div>
+</section>
+
+
+<footer>
+  BALLIK · KONSEPT v0.6 · 2026 · BURDUR / ALTINYAYLA · BU BELGE BİR BAŞLANGIÇTIR
+</footer>
+
+</div>
+
+</body>
+</html>
